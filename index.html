@@ -399,6 +399,44 @@
       outline: none;
       border-color: var(--accent-yellow);
     }
+
+    /* Selector de Tipo de Pedido */
+    .delivery-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .type-btn {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .type-btn.active {
+      background: rgba(255, 183, 3, 0.15);
+      border-color: var(--accent-yellow);
+      color: var(--accent-yellow);
+    }
+
+    /* Resumen de total */
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-white);
+      margin: 10px 0 15px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -444,14 +482,31 @@
 
       <div class="cart-items-list" id="cart-list"></div>
 
+      <!-- Selector Delivery / Retiro -->
       <div style="margin-top: 10px;">
-        <input type="text" id="cust-name" class="input-field" placeholder="Tu Nombre">
-        <input type="text" id="cust-address" class="input-field" placeholder="Dirección / Mesa o Retiro">
+        <label style="font-size: 0.75rem; font-weight: 600; color: var(--accent-orange); text-transform: uppercase; margin-bottom: 6px; display: block;">
+          ¿Cómo deseas recibir tu pedido?
+        </label>
+        <div class="delivery-type-selector">
+          <button class="type-btn active" id="btn-delivery" onclick="setOrderType('delivery')">
+            🛵 Delivery
+          </button>
+          <button class="type-btn" id="btn-retiro" onclick="setOrderType('retiro')">
+            🏬 Retiro en Local
+          </button>
+        </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0;">
-        <span style="font-weight: 600; color: var(--text-muted);">Total:</span>
-        <span style="font-family: 'Montserrat'; font-weight: 800; font-size: 1.3rem; color: var(--accent-yellow);" id="modal-total">$0</span>
+      <!-- Datos del Cliente -->
+      <div>
+        <input type="text" id="cust-name" class="input-field" placeholder="Tu Nombre">
+        <input type="text" id="cust-address" class="input-field" placeholder="Dirección exacta (calle, número y referencia)">
+      </div>
+
+      <!-- Resumen Total Simple -->
+      <div class="total-row">
+        <span>Total:</span>
+        <span style="font-family: 'Montserrat'; color: var(--accent-yellow);" id="modal-total">$0</span>
       </div>
 
       <button class="btn-add" style="background: var(--whatsapp-green); color: white; padding: 14px; font-size: 1rem; border-radius: 30px;" onclick="enviarPedidoWhatsApp()">
@@ -462,10 +517,12 @@
 
   <script>
     // ==========================================
-    // CONFIGURACIÓN: Teléfono y Combo Chippys
+    // CONFIGURACIÓN DE TU LOCAL
     // ==========================================
     const TELEFONO_WHATSAPP = "56941971256"; 
     const PRECIO_COMBO = 2700;
+
+    let tipoEntrega = 'delivery'; // 'delivery' o 'retiro'
 
     // ==========================================
     // BASE DE DATOS DE PRODUCTOS DE CHIPPYS
@@ -750,6 +807,19 @@
       actualizarUI();
     }
 
+    function setOrderType(tipo) {
+      tipoEntrega = tipo;
+      document.getElementById('btn-delivery').classList.toggle('active', tipo === 'delivery');
+      document.getElementById('btn-retiro').classList.toggle('active', tipo === 'retiro');
+      
+      const addrInput = document.getElementById('cust-address');
+      if (tipo === 'retiro') {
+        addrInput.placeholder = "Retiro en local (Opcional: hora aproximada)";
+      } else {
+        addrInput.placeholder = "Dirección exacta (calle, número y referencia)";
+      }
+    }
+
     function actualizarUI() {
       let total = 0;
       let totalItems = 0;
@@ -762,8 +832,8 @@
       }
 
       carrito.forEach(item => {
-        const subtotal = item.precio * item.qty;
-        total += subtotal;
+        const itemSub = item.precio * item.qty;
+        total += itemSub;
         totalItems += item.qty;
 
         cartList.innerHTML += `
@@ -802,21 +872,35 @@
         return;
       }
       const nombre = document.getElementById('cust-name').value.trim() || 'Cliente';
-      const direccion = document.getElementById('cust-address').value.trim() || 'Por coordinar';
+      let direccion = document.getElementById('cust-address').value.trim();
 
-      let texto = `*¡HOLA CHIPPYS! QUIERO HACER UN PEDIDO* 🍔🔥\n\n`;
-      texto += `👤 *Cliente:* ${nombre}\n`;
-      texto += `📍 *Entrega:* ${direccion}\n\n`;
-      texto += `📝 *DETALLE:* \n`;
+      if (tipoEntrega === 'delivery' && !direccion) {
+        alert("Por favor ingresa tu dirección para el delivery.");
+        return;
+      }
+
+      if (tipoEntrega === 'retiro' && !direccion) {
+        direccion = "Retiro en local";
+      }
 
       let total = 0;
+      let texto = `*¡HOLA CHIPPYS! QUIERO HACER UN PEDIDO* 🍔🔥\n\n`;
+      texto += `👤 *Cliente:* ${nombre}\n`;
+      texto += `🛵 *Modalidad:* ${tipoEntrega === 'delivery' ? 'DELIVERY' : 'RETIRO EN LOCAL'}\n`;
+      if (tipoEntrega === 'delivery') {
+        texto += `📍 *Dirección:* ${direccion}\n\n`;
+      } else {
+        texto += `🏬 *Detalle:* ${direccion}\n\n`;
+      }
+      texto += `📝 *DETALLE DEL PEDIDO:* \n`;
+
       carrito.forEach(i => {
         const sub = i.precio * i.qty;
         total += sub;
         texto += `• ${i.qty}x ${i.nombre} - $${sub.toLocaleString('es-CL')}\n`;
       });
 
-      texto += `\n💰 *TOTAL A PAGAR:* $${total.toLocaleString('es-CL')}`;
+      texto += `\n💰 *TOTAL:* $${total.toLocaleString('es-CL')}`;
 
       const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
       window.open(url, '_blank');
