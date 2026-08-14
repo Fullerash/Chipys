@@ -222,12 +222,12 @@
       flex-direction: column;
     }
     .combo-title {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-white);
     }
     .combo-sub {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
     }
 
@@ -462,9 +462,9 @@
 
   <script>
     // ==========================================
-    // CONFIGURACIÓN: Ingresa tu número aquí
+    // CONFIGURACIÓN: Teléfono y Combo Chippys
     // ==========================================
-    const TELEFONO_WHATSAPP = "569XXXXXXXX"; 
+    const TELEFONO_WHATSAPP = "56941971256"; 
     const PRECIO_COMBO = 2700;
 
     // ==========================================
@@ -640,8 +640,8 @@
             comboHtml = `
               <label class="combo-box" for="combo-${p.id}">
                 <div class="combo-text">
-                  <span class="combo-title">🍟🥤 ¿Hacer Combo? (+ $2.700)</span>
-                  <span class="combo-sub">Suma Papas Fritas + Bebida individual</span>
+                  <span class="combo-title">🍟🥤 Combo (+ $2.700)</span>
+                  <span class="combo-sub">Suma Papas Fritas + Bebida en lata</span>
                 </div>
                 <input type="checkbox" id="combo-${p.id}" onchange="toggleCombo(${p.id})">
               </label>
@@ -713,7 +713,7 @@
 
       if (tieneCombo) {
         key += `_combo`;
-        tituloItem += ` + Combo (Papas y Bebida)`;
+        tituloItem += ` + Combo (Papas y Bebida en lata)`;
         precioFinal += PRECIO_COMBO;
       }
 
