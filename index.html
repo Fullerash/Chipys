@@ -200,6 +200,37 @@
       font-weight: 600;
     }
 
+    /* Checkbox de Combo */
+    .combo-box {
+      background: rgba(251, 133, 0, 0.1);
+      border: 1px dashed var(--accent-orange);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .combo-box input {
+      accent-color: var(--accent-orange);
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    .combo-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .combo-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+    .combo-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
     /* Botón Agregar */
     .btn-add {
       width: 100%;
@@ -433,7 +464,8 @@
     // ==========================================
     // CONFIGURACIÓN: Ingresa tu número aquí
     // ==========================================
-    const TELEFONO_WHATSAPP = "56941971256"; // Reemplaza por tu WhatsApp real
+    const TELEFONO_WHATSAPP = "569XXXXXXXX"; 
+    const PRECIO_COMBO = 2700;
 
     // ==========================================
     // BASE DE DATOS DE PRODUCTOS DE CHIPPYS
@@ -443,6 +475,7 @@
         id: "smash",
         categoria: "Smash Burgers",
         icono: "🍔",
+        permiteCombo: true,
         productos: [
           { id: 1, nombre: "Clasic Burger", desc: "Pan de papa tostado, carne smash, lechuga fresca, tomate y mayonesa.", precio: 6590 },
           { id: 2, nombre: "Hot Chippys Deluxe", desc: "Pan de papa tostado, carne smash, queso cheddar, cebolla caramelizada, salsa BBQ y tocino.", precio: 7590 },
@@ -456,6 +489,7 @@
         id: "vienesas",
         categoria: "Vienesas",
         icono: "🌭",
+        permiteCombo: true,
         productos: [
           { id: 10, nombre: "Vienesa Italiana", desc: "Palta, tomate y mayonesa.", variantes: [{ tipo: "Normal", precio: 2400 }, { tipo: "Grande", precio: 3200 }] },
           { id: 11, nombre: "Completo", desc: "Chucrut, americana y tomate.", variantes: [{ tipo: "Normal", precio: 2400 }, { tipo: "Grande", precio: 3200 }] },
@@ -469,6 +503,7 @@
         id: "as",
         categoria: "As",
         icono: "🥩",
+        permiteCombo: true,
         productos: [
           { id: 20, nombre: "As Hot Spicy", desc: "Carne de churrasco, cebolla caramelizada, salsa spicy de jalapeño y mermelada de tocino.", variantes: [{ tipo: "Normal", precio: 4500 }, { tipo: "Grande", precio: 5500 }] },
           { id: 21, nombre: "As Italiano", desc: "Carne de churrasco, tomate, palta y mayonesa.", variantes: [{ tipo: "Normal", precio: 3700 }, { tipo: "Grande", precio: 4990 }] },
@@ -482,6 +517,7 @@
         id: "sandwiches",
         categoria: "Sandwiches (Lomito / Churrasco / Mechada)",
         icono: "🍔",
+        permiteCombo: true,
         productos: [
           { id: 30, nombre: "Sandwich Italiano", desc: "Proteína a elección, palta, tomate y mayo.", carnes: [{ tipo: "Lomito", precio: 3990 }, { tipo: "Churrasco", precio: 4490 }, { tipo: "Mechada", precio: 5290 }] },
           { id: 31, nombre: "Sandwich A Lo Pobre", desc: "Proteína a elección, cebolla caramelizada y huevo frito.", carnes: [{ tipo: "Lomito", precio: 3990 }, { tipo: "Churrasco", precio: 4490 }, { tipo: "Mechada", precio: 5290 }] },
@@ -541,6 +577,7 @@
 
     let carrito = [];
     const seleccionOpciones = {};
+    const seleccionCombos = {};
 
     function renderMenu() {
       const container = document.getElementById('menu-container');
@@ -554,10 +591,10 @@
 
         cat.productos.forEach(p => {
           let opcionesHtml = '';
-          let precioInicial = p.precio || 0;
+          let precioBase = p.precio || 0;
 
           if (p.variantes) {
-            precioInicial = p.variantes[0].precio;
+            precioBase = p.variantes[0].precio;
             opcionesHtml = `
               <div class="options-container">
                 <span class="options-label">Tamaño / Porción:</span>
@@ -575,7 +612,7 @@
               seleccionOpciones[p.id] = { tipo: p.variantes[0].tipo, precio: p.variantes[0].precio };
             }
           } else if (p.carnes) {
-            precioInicial = p.carnes[0].precio;
+            precioBase = p.carnes[0].precio;
             opcionesHtml = `
               <div class="options-container">
                 <span class="options-label">Elige tu Carne:</span>
@@ -592,16 +629,34 @@
             if (!seleccionOpciones[p.id]) {
               seleccionOpciones[p.id] = { tipo: p.carnes[0].tipo, precio: p.carnes[0].precio };
             }
+          } else {
+            if (!seleccionOpciones[p.id]) {
+              seleccionOpciones[p.id] = { tipo: '', precio: p.precio };
+            }
+          }
+
+          let comboHtml = '';
+          if (cat.permiteCombo) {
+            comboHtml = `
+              <label class="combo-box" for="combo-${p.id}">
+                <div class="combo-text">
+                  <span class="combo-title">🍟🥤 ¿Hacer Combo? (+ $2.700)</span>
+                  <span class="combo-sub">Suma Papas Fritas + Bebida individual</span>
+                </div>
+                <input type="checkbox" id="combo-${p.id}" onchange="toggleCombo(${p.id})">
+              </label>
+            `;
           }
 
           catHtml += `
             <div class="card">
               <div class="card-header">
                 <div class="card-title">${p.nombre}</div>
-                <div class="card-price" id="price-tag-${p.id}">$${precioInicial.toLocaleString('es-CL')}</div>
+                <div class="card-price" id="price-tag-${p.id}">$${precioBase.toLocaleString('es-CL')}</div>
               </div>
               <div class="card-desc">${p.desc}</div>
               ${opcionesHtml}
+              ${comboHtml}
               <button class="btn-add" onclick="agregarAlCarrito(${p.id})">+ Agregar al pedido</button>
             </div>
           `;
@@ -617,7 +672,22 @@
       const chips = btnEl.parentElement.querySelectorAll('.opt-chip');
       chips.forEach(c => c.classList.remove('selected'));
       btnEl.classList.add('selected');
-      document.getElementById(`price-tag-${prodId}`).innerText = `$${precio.toLocaleString('es-CL')}`;
+      actualizarPrecioCard(prodId);
+    }
+
+    function toggleCombo(prodId) {
+      const checkbox = document.getElementById(`combo-${prodId}`);
+      seleccionCombos[prodId] = checkbox.checked;
+      actualizarPrecioCard(prodId);
+    }
+
+    function actualizarPrecioCard(prodId) {
+      const opt = seleccionOpciones[prodId];
+      let totalCard = opt ? opt.precio : 0;
+      if (seleccionCombos[prodId]) {
+        totalCard += PRECIO_COMBO;
+      }
+      document.getElementById(`price-tag-${prodId}`).innerText = `$${totalCard.toLocaleString('es-CL')}`;
     }
 
     function agregarAlCarrito(prodId) {
@@ -628,15 +698,23 @@
       }
       if (!prodObj) return;
 
+      const opt = seleccionOpciones[prodId];
+      const tieneCombo = seleccionCombos[prodId] || false;
+
       let key = `${prodId}`;
       let tituloItem = prodObj.nombre;
-      let precioFinal = prodObj.precio;
+      let precioFinal = prodObj.precio || opt.precio;
 
       if (prodObj.variantes || prodObj.carnes) {
-        const opt = seleccionOpciones[prodId];
         key += `_${opt.tipo}`;
         tituloItem += ` (${opt.tipo})`;
         precioFinal = opt.precio;
+      }
+
+      if (tieneCombo) {
+        key += `_combo`;
+        tituloItem += ` + Combo (Papas y Bebida)`;
+        precioFinal += PRECIO_COMBO;
       }
 
       const index = carrito.findIndex(item => item.key === key);
@@ -651,6 +729,15 @@
           qty: 1
         });
       }
+
+      // Desmarcar combo tras agregar
+      const comboCheck = document.getElementById(`combo-${prodId}`);
+      if (comboCheck) {
+        comboCheck.checked = false;
+        seleccionCombos[prodId] = false;
+        actualizarPrecioCard(prodId);
+      }
+
       actualizarUI();
     }
 
@@ -719,7 +806,7 @@
 
       let texto = `*¡HOLA CHIPPYS! QUIERO HACER UN PEDIDO* 🍔🔥\n\n`;
       texto += `👤 *Cliente:* ${nombre}\n`;
-      texto += `📍 *Entrega:* ${direccion}\n\n`;
+      texto += `📍 *Entrega/Mesa:* ${direccion}\n\n`;
       texto += `📝 *DETALLE:* \n`;
 
       let total = 0;
