@@ -400,11 +400,17 @@
       border-color: var(--accent-yellow);
     }
 
-    /* Selector de Tipo de Pedido */
+    /* Selector de Tipo de Pedido y Método de Pago */
     .delivery-type-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
+      margin-bottom: 12px;
+    }
+    .payment-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
       margin-bottom: 12px;
     }
     .type-btn {
@@ -497,6 +503,24 @@
         </div>
       </div>
 
+      <!-- Selector de Método de Pago para Delivery -->
+      <div id="payment-section" style="margin-top: 5px;">
+        <label style="font-size: 0.75rem; font-weight: 600; color: var(--accent-orange); text-transform: uppercase; margin-bottom: 6px; display: block;">
+          Método de Pago
+        </label>
+        <div class="payment-type-selector">
+          <button class="type-btn active" id="btn-pay-transfer" onclick="setPaymentMethod('Transferencia')">
+            Transferencia
+          </button>
+          <button class="type-btn" id="btn-pay-cash" onclick="setPaymentMethod('Efectivo')">
+            Efectivo
+          </button>
+          <button class="type-btn" id="btn-pay-card" onclick="setPaymentMethod('Tarjeta')">
+            Tarjeta
+          </button>
+        </div>
+      </div>
+
       <!-- Datos del Cliente -->
       <div>
         <input type="text" id="cust-name" class="input-field" placeholder="Tu Nombre">
@@ -523,6 +547,7 @@
     const PRECIO_COMBO = 2700;
 
     let tipoEntrega = 'delivery'; // 'delivery' o 'retiro'
+    let metodoPago = 'Transferencia'; // 'Transferencia', 'Efectivo' o 'Tarjeta'
 
     // ==========================================
     // BASE DE DATOS DE PRODUCTOS DE CHIPPYS
@@ -813,11 +838,22 @@
       document.getElementById('btn-retiro').classList.toggle('active', tipo === 'retiro');
       
       const addrInput = document.getElementById('cust-address');
+      const paymentSection = document.getElementById('payment-section');
+
       if (tipo === 'retiro') {
-        addrInput.placeholder = "Retiro en local (Opcional: hora aproximada)";
+        addrInput.style.display = "none";
+        paymentSection.style.display = "none";
       } else {
-        addrInput.placeholder = "Dirección exacta (calle, número y referencia)";
+        addrInput.style.display = "block";
+        paymentSection.style.display = "block";
       }
+    }
+
+    function setPaymentMethod(metodo) {
+      metodoPago = metodo;
+      document.getElementById('btn-pay-transfer').classList.toggle('active', metodo === 'Transferencia');
+      document.getElementById('btn-pay-cash').classList.toggle('active', metodo === 'Efectivo');
+      document.getElementById('btn-pay-card').classList.toggle('active', metodo === 'Tarjeta');
     }
 
     function actualizarUI() {
@@ -888,9 +924,10 @@
       texto += `👤 *Cliente:* ${nombre}\n`;
       texto += `🛵 *Modalidad:* ${tipoEntrega === 'delivery' ? 'DELIVERY' : 'RETIRO EN LOCAL'}\n`;
       if (tipoEntrega === 'delivery') {
+        texto += `💳 *Método de Pago:* ${metodoPago}\n`;
         texto += `📍 *Dirección:* ${direccion}\n\n`;
       } else {
-        texto += `🏬 *Detalle:* ${direccion}\n\n`;
+        texto += `\n`;
       }
       texto += `📝 *DETALLE DEL PEDIDO:* \n`;
 
