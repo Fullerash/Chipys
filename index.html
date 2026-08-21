@@ -123,17 +123,42 @@
       background: var(--border-color);
     }
 
-    /* Card Producto */
+    /* Card Producto con soporte de Imagen */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
       transition: transform 0.15s ease, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
     }
     .card:active {
       transform: scale(0.99);
+    }
+    .card-img-container {
+      width: 100%;
+      height: 200px;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+    }
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.3s ease;
+    }
+    .card:hover .card-img {
+      transform: scale(1.03);
+    }
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
     .card-header {
       display: flex;
@@ -400,8 +425,8 @@
       border-color: var(--accent-yellow);
     }
 
-    /* Selector de Tipo de Pedido y Método de Pago */
-    .delivery-type-selector {
+    /* Selectores en Modales */
+    .delivery-type-selector, .pickup-service-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
@@ -503,7 +528,22 @@
         </div>
       </div>
 
-      <!-- Selector de Método de Pago para Delivery -->
+      <!-- Selector Servir / Llevar (Solo visible en Retiro) -->
+      <div id="pickup-options-section" style="margin-top: 5px; display: none;">
+        <label style="font-size: 0.75rem; font-weight: 600; color: var(--accent-orange); text-transform: uppercase; margin-bottom: 6px; display: block;">
+          ¿Es para servir o para llevar?
+        </label>
+        <div class="pickup-service-selector">
+          <button class="type-btn active" id="btn-service-mesa" onclick="setServiceType('Para Servir (Mesa)')">
+            🍽️ Para Servir
+          </button>
+          <button class="type-btn" id="btn-service-llevar" onclick="setServiceType('Para Llevar')">
+            🛍️ Para Llevar
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector de Método de Pago -->
       <div id="payment-section" style="margin-top: 5px;">
         <label style="font-size: 0.75rem; font-weight: 600; color: var(--accent-orange); text-transform: uppercase; margin-bottom: 6px; display: block;">
           Método de Pago
@@ -547,6 +587,7 @@
     const PRECIO_COMBO = 2700;
 
     let tipoEntrega = 'delivery'; // 'delivery' o 'retiro'
+    let tipoServicio = 'Para Servir (Mesa)'; // 'Para Servir (Mesa)' o 'Para Llevar'
     let metodoPago = 'Transferencia'; // 'Transferencia', 'Efectivo' o 'Tarjeta'
 
     // ==========================================
@@ -559,12 +600,12 @@
         icono: "🍔",
         permiteCombo: true,
         productos: [
-          { id: 1, nombre: "Smash Clasic Burger", desc: "Pan de papa tostado, carne smash, Queso gauda, lechuga fresca, tomate y mayonesa.", precio: 6590 },
-          { id: 2, nombre: "Smash Hot Chippys", desc: "Pan de papa tostado, carne smash, queso cheddar,jalapeños, cebolla en cubos, y nuestra irresistible mermeladade tocino.", precio: 7590 },
-          { id: 3, nombre: "Smash Big Chippys", desc: "Pan de papa tostado, carne smash, lechuga fresca, pepinillos y nuestra cremosa salsa Big.", precio: 7590 },
-          { id: 4, nombre: "Smash Funghi Burger", desc: "Pan de papa tostado, carne smash, base de cebolla en cubos, champiñones salteados y cebolla caramelizada.", precio: 7590 },
-          { id: 5, nombre: "Smash Texana", desc: "Pan de papa tostado, carne smash, queso cheddar, cebolla en cubos y mermelada de tocino.", precio: 7590 },
-          { id: 6, nombre: "Smash Deluxe", desc: "Pan de papa tostado, carne smash, queso, cebolla caramelizada, tocino crujiente y camarones ecuatorianos.", precio: 8290 }
+          { id: 1, nombre: "Smash Clasic Burger", desc: "Pan de papa tostado, carne smash, Queso gauda, lechuga fresca, tomate y mayonesa.", precio: 6590, img: "clasic.jpeg" },
+          { id: 2, nombre: "Smash Hot Chippys", desc: "Pan de papa tostado, carne smash, queso cheddar,jalapeños, cebolla en cubos, y nuestra irresistible mermeladade tocino.", precio: 7590, img: "hot-chippys.jpeg" },
+          { id: 3, nombre: "Smash Big Chippys", desc: "Pan de papa tostado, carne smash, lechuga fresca, pepinillos y nuestra cremosa salsa Big.", precio: 7590, img: "big-chippys.jpeg" },
+          { id: 4, nombre: "Smash Funghi Burger", desc: "Pan de papa tostado, carne smash, base de cebolla en cubos, champiñones salteados y cebolla caramelizada.", precio: 7590, img: "funghi.jpeg" },
+          { id: 5, nombre: "Smash Texana", desc: "Pan de papa tostado, carne smash, queso cheddar, cebolla caramelizada, salsa BBQ y tocino.", precio: 7590, img: "texana.jpeg" },
+          { id: 6, nombre: "Smash Deluxe", desc: "Pan de papa tostado, carne smash, queso, cebolla caramelizada, tocino crujiente y camarones ecuatorianos.", precio: 8290, img: "deluxe.jpeg" }
         ]
       },
       {
@@ -730,16 +771,28 @@
             `;
           }
 
+          let imgHtml = '';
+          if (p.img) {
+            imgHtml = `
+              <div class="card-img-container">
+                <img src="${p.img}" alt="${p.nombre}" class="card-img" loading="lazy">
+              </div>
+            `;
+          }
+
           catHtml += `
             <div class="card">
-              <div class="card-header">
-                <div class="card-title">${p.nombre}</div>
-                <div class="card-price" id="price-tag-${p.id}">$${precioBase.toLocaleString('es-CL')}</div>
+              ${imgHtml}
+              <div class="card-body">
+                <div class="card-header">
+                  <div class="card-title">${p.nombre}</div>
+                  <div class="card-price" id="price-tag-${p.id}">$${precioBase.toLocaleString('es-CL')}</div>
+                </div>
+                <div class="card-desc">${p.desc}</div>
+                ${opcionesHtml}
+                ${comboHtml}
+                <button class="btn-add" onclick="agregarAlCarrito(${p.id})">+ Agregar al pedido</button>
               </div>
-              <div class="card-desc">${p.desc}</div>
-              ${opcionesHtml}
-              ${comboHtml}
-              <button class="btn-add" onclick="agregarAlCarrito(${p.id})">+ Agregar al pedido</button>
             </div>
           `;
         });
@@ -812,7 +865,6 @@
         });
       }
 
-      // Desmarcar combo tras agregar
       const comboCheck = document.getElementById(`combo-${prodId}`);
       if (comboCheck) {
         comboCheck.checked = false;
@@ -838,15 +890,21 @@
       document.getElementById('btn-retiro').classList.toggle('active', tipo === 'retiro');
       
       const addrInput = document.getElementById('cust-address');
-      const paymentSection = document.getElementById('payment-section');
+      const pickupOptions = document.getElementById('pickup-options-section');
 
       if (tipo === 'retiro') {
         addrInput.style.display = "none";
-        paymentSection.style.display = "none";
+        pickupOptions.style.display = "block";
       } else {
         addrInput.style.display = "block";
-        paymentSection.style.display = "block";
+        pickupOptions.style.display = "none";
       }
+    }
+
+    function setServiceType(tipo) {
+      tipoServicio = tipo;
+      document.getElementById('btn-service-mesa').classList.toggle('active', tipo === 'Para Servir (Mesa)');
+      document.getElementById('btn-service-llevar').classList.toggle('active', tipo === 'Para Llevar');
     }
 
     function setPaymentMethod(metodo) {
@@ -915,20 +973,19 @@
         return;
       }
 
-      if (tipoEntrega === 'retiro' && !direccion) {
-        direccion = "Retiro en local";
-      }
-
       let total = 0;
       let texto = `*¡HOLA CHIPPYS! QUIERO HACER UN PEDIDO* 🍔🔥\n\n`;
       texto += `👤 *Cliente:* ${nombre}\n`;
-      texto += `🛵 *Modalidad:* ${tipoEntrega === 'delivery' ? 'DELIVERY' : 'RETIRO EN LOCAL'}\n`;
+      
       if (tipoEntrega === 'delivery') {
-        texto += `💳 *Método de Pago:* ${metodoPago}\n`;
-        texto += `📍 *Dirección:* ${direccion}\n\n`;
+        texto += `🛵 *Modalidad:* DELIVERY\n`;
+        texto += `📍 *Dirección:* ${direccion}\n`;
       } else {
-        texto += `\n`;
+        texto += `🏬 *Modalidad:* RETIRO EN LOCAL\n`;
+        texto += `🍽️ *Servicio:* ${tipoServicio}\n`;
       }
+      
+      texto += `💳 *Método de Pago:* ${metodoPago}\n\n`;
       texto += `📝 *DETALLE DEL PEDIDO:* \n`;
 
       carrito.forEach(i => {
