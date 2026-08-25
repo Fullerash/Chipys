@@ -39,7 +39,7 @@
     /* Header */
     header {
       background: linear-gradient(180deg, rgba(251,133,0,0.15) 0%, rgba(18,19,22,0) 100%), var(--bg-main);
-      padding: 30px 20px 20px;
+      padding: 25px 20px 18px;
       text-align: center;
       border-bottom: 1px solid var(--border-color);
     }
@@ -58,6 +58,31 @@
       color: var(--text-muted);
       font-weight: 500;
       letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    /* Badge de Estado del Local */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .status-badge.open {
+      background: rgba(37, 211, 102, 0.15);
+      color: #25d366;
+      border-color: rgba(37, 211, 102, 0.3);
+    }
+    .status-badge.closed {
+      background: rgba(230, 57, 70, 0.15);
+      color: #ff4d5a;
+      border-color: rgba(230, 57, 70, 0.3);
     }
 
     /* Categorías Stickys */
@@ -296,6 +321,10 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.7);
       z-index: 100;
     }
+    .cart-bar.closed-bar {
+      border-color: var(--border-color);
+      background: rgba(20, 20, 24, 0.95);
+    }
     .cart-info {
       display: flex;
       flex-direction: column;
@@ -324,8 +353,13 @@
       align-items: center;
       gap: 6px;
     }
+    .btn-cart-view.closed-btn {
+      background: var(--bg-card-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
 
-    /* Modal Carrito */
+    /* Modales */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -456,6 +490,19 @@
       color: var(--accent-yellow);
     }
 
+    /* Tabla de Horarios */
+    .schedule-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.88rem;
+    }
+    .schedule-row.current-day {
+      color: var(--accent-yellow);
+      font-weight: 700;
+    }
+
     /* Resumen de total */
     .total-row {
       display: flex;
@@ -475,6 +522,10 @@
   <header>
     <div class="brand-title">CHIPPYS</div>
     <div class="brand-subtitle">BURGER • SANDWICHERÍA • COMPLETERÍA</div>
+    <div id="status-badge" class="status-badge" onclick="toggleScheduleModal(true)">
+      <span id="status-dot">●</span>
+      <span id="status-text">Cargando horario...</span>
+    </div>
   </header>
 
   <!-- Barra Categorías -->
@@ -493,13 +544,13 @@
   <main class="container" id="menu-container"></main>
 
   <!-- Barra Flotante Carrito -->
-  <div class="cart-bar">
+  <div class="cart-bar" id="cart-bar">
     <div class="cart-info">
       <span class="cart-count" id="bar-count">0 ítems agregados</span>
       <span class="cart-total" id="bar-total">$0</span>
     </div>
-    <button class="btn-cart-view" onclick="toggleModal(true)">
-      <span>🛒 Ver Pedido</span>
+    <button class="btn-cart-view" id="btn-cart-main" onclick="handleCartClick()">
+      <span id="cart-btn-label">🛒 Ver Pedido</span>
     </button>
   </div>
 
@@ -579,16 +630,52 @@
     </div>
   </div>
 
+  <!-- Modal Horarios de Atención -->
+  <div class="modal-overlay" id="schedule-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">🕒 Horarios de Chippys</h3>
+        <button class="modal-close" onclick="toggleScheduleModal(false)">&times;</button>
+      </div>
+
+      <div style="padding: 10px 0; overflow-y: auto;" id="schedule-list"></div>
+
+      <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 15px;">
+        ¡Puedes revisar nuestra carta completa en cualquier momento! Los pedidos se habilitan dentro de los turnos de atención.
+      </p>
+
+      <button class="btn-add" style="margin-top: 15px;" onclick="toggleScheduleModal(false)">
+        Entendido
+      </button>
+    </div>
+  </div>
+
   <script>
     // ==========================================
-    // CONFIGURACIÓN DE TU LOCAL
+    // CONFIGURACIÓN GENERAL Y TELÉFONO
     // ==========================================
     const TELEFONO_WHATSAPP = "56941971256"; 
     const PRECIO_COMBO = 2700;
 
-    let tipoEntrega = 'delivery'; // 'delivery' o 'retiro'
-    let tipoServicio = 'Para Servir (Mesa)'; // 'Para Servir (Mesa)' o 'Para Llevar'
-    let metodoPago = 'Transferencia'; // 'Transferencia', 'Efectivo' o 'Tarjeta'
+    // ==========================================
+    // CONFIGURACIÓN DE HORARIOS DE CHIPPYS
+    // 0: Domingo, 1: Lunes, 2: Martes, 3: Miércoles, 4: Jueves, 5: Viernes, 6: Sábado
+    // (Ajusta los horarios según la jornada real de tu local)
+    // ==========================================
+    const HORARIOS_ATENCION = {
+      1: { nombre: "Lunes", abierto: false, turnos: [] }, // Cerrado
+      2: { nombre: "Martes", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
+      3: { nombre: "Miércoles", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
+      4: { nombre: "Jueves", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
+      5: { nombre: "Viernes", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
+      6: { nombre: "Sábado", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
+      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "09:00", hasta: "20:00" }] }
+    };
+
+    let localAbierto = false;
+    let tipoEntrega = 'delivery'; 
+    let tipoServicio = 'Para Servir (Mesa)'; 
+    let metodoPago = 'Transferencia'; 
 
     // ==========================================
     // BASE DE DATOS DE PRODUCTOS DE CHIPPYS
@@ -655,7 +742,7 @@
         categoria: "Papas Fritas",
         icono: "🍟",
         productos: [
-          { id: 40, nombre: "Papas Solas", desc: "Papas fritas crujientes.", variantes: [{ tipo: "Simple", precio: 2990 }, { tipo: "Mediana", precio: 3990 }, { tipo: "L", precio: 4990 }, { tipo: "1 Kilo", precio: 6990 }] },
+          { id: 40, nombre: "Papas Solas", desc: "Papas fritas crujientes.", variantes: [{ tipo: "Simple", precio: 2990 }, { tipo: "Mediana", precio: 3990 }, { tipo: "L", precio: 4990 }] },
           { id: 41, nombre: "Papas Supremas", desc: "Queso cheddar, churrasco, tomate y cebollín.", variantes: [{ tipo: "Mediana", precio: 6400 }, { tipo: "L", precio: 7400 }] },
           { id: 42, nombre: "Papas Chippys", desc: "Queso cheddar y tocino crujiente.", variantes: [{ tipo: "Mediana", precio: 6400 }, { tipo: "L", precio: 7990 }] },
           { id: 43, nombre: "Chorrillana Chippys", desc: "Cebolla caramelizada, carne y huevo frito.", variantes: [{ tipo: "Mediana", precio: 5990 }, { tipo: "L", precio: 7490 }] },
@@ -702,6 +789,114 @@
     const seleccionOpciones = {};
     const seleccionCombos = {};
 
+    // ==========================================
+    // SISTEMA DE CONTROL DE HORARIOS
+    // ==========================================
+    function comprobarHorario() {
+      const ahora = new Date();
+      const diaSemana = ahora.getDay();
+      const minutosActuales = ahora.getHours() * 60 + ahora.getMinutes();
+
+      const configHoy = HORARIOS_ATENCION[diaSemana];
+      let abierto = false;
+
+      if (configHoy && configHoy.abierto) {
+        configHoy.turnos.forEach(t => {
+          const [hD, mD] = t.desde.split(':').map(Number);
+          const [hH, mH] = t.hasta.split(':').map(Number);
+
+          const minDesde = hD * 60 + mD;
+          let minHasta = hH * 60 + mH;
+
+          // Si el horario pasa de medianoche (ej. 18:00 a 00:30)
+          if (minHasta < minDesde) {
+            if (minutosActuales >= minDesde || minutosActuales <= minHasta) {
+              abierto = true;
+            }
+          } else {
+            if (minutosActuales >= minDesde && minutosActuales <= minHasta) {
+              abierto = true;
+            }
+          }
+        });
+      }
+
+      localAbierto = abierto;
+      actualizarBadgeEstado(abierto);
+      actualizarBarraPedidoSegunHorario();
+    }
+
+    function actualizarBadgeEstado(abierto) {
+      const badge = document.getElementById('status-badge');
+      const text = document.getElementById('status-text');
+
+      if (abierto) {
+        badge.className = "status-badge open";
+        text.innerText = "🟢 Abierto Ahora (Haz tu pedido)";
+      } else {
+        badge.className = "status-badge closed";
+        text.innerText = "🔴 Cerrado Ahora (Ver horarios)";
+      }
+    }
+
+    function actualizarBarraPedidoSegunHorario() {
+      const bar = document.getElementById('cart-bar');
+      const btn = document.getElementById('btn-cart-main');
+      const label = document.getElementById('cart-btn-label');
+
+      if (!localAbierto) {
+        bar.classList.add('closed-bar');
+        btn.classList.add('closed-btn');
+        label.innerText = "🕒 Local Cerrado";
+      } else {
+        bar.classList.remove('closed-bar');
+        btn.classList.remove('closed-btn');
+        label.innerText = "🛒 Ver Pedido";
+      }
+    }
+
+    function handleCartClick() {
+      if (!localAbierto) {
+        toggleScheduleModal(true);
+      } else {
+        toggleModal(true);
+      }
+    }
+
+    function toggleScheduleModal(show) {
+      const modal = document.getElementById('schedule-modal');
+      modal.classList.toggle('open', show);
+      if (show) renderScheduleList();
+    }
+
+    function renderScheduleList() {
+      const container = document.getElementById('schedule-list');
+      const hoy = new Date().getDay();
+      container.innerHTML = '';
+
+      const diasOrden = [1, 2, 3, 4, 5, 6, 0]; // Lunes a Domingo
+
+      diasOrden.forEach(d => {
+        const item = HORARIOS_ATENCION[d];
+        const esHoy = d === hoy;
+        let horasTexto = "Cerrado";
+
+        if (item.abierto && item.turnos.length > 0) {
+          horasTexto = item.turnos.map(t => `${t.desde} a ${t.hasta} hrs`).join(' / ');
+        }
+
+        container.innerHTML += `
+          <div class="schedule-row ${esHoy ? 'current-day' : ''}">
+            <span>${item.nombre} ${esHoy ? '(Hoy)' : ''}:</span>
+            <span>${horasTexto}</span>
+          </div>
+        `;
+      });
+    }
+
+    // ==========================================
+    // RENDERIZADO DEL MENÚ Y PRODUCTOS
+    // ==========================================
     function renderMenu() {
       const container = document.getElementById('menu-container');
       container.innerHTML = '';
@@ -826,6 +1021,11 @@
     }
 
     function agregarAlCarrito(prodId) {
+      if (!localAbierto) {
+        toggleScheduleModal(true);
+        return;
+      }
+
       let prodObj = null;
       for (const cat of menuData) {
         const found = cat.productos.find(p => p.id === prodId);
@@ -951,6 +1151,10 @@
     }
 
     function toggleModal(show) {
+      if (show && !localAbierto) {
+        toggleScheduleModal(true);
+        return;
+      }
       const modal = document.getElementById('cart-modal');
       modal.classList.toggle('open', show);
     }
@@ -961,6 +1165,13 @@
     }
 
     function enviarPedidoWhatsApp() {
+      if (!localAbierto) {
+        alert("En este momento estamos fuera de horario de atención.");
+        toggleModal(false);
+        toggleScheduleModal(true);
+        return;
+      }
+
       if (carrito.length === 0) {
         alert("Agrega algún producto primero.");
         return;
@@ -1003,6 +1214,8 @@
     // Inicializar
     renderMenu();
     actualizarUI();
+    comprobarHorario();
+    setInterval(comprobarHorario, 60000); // Revisa automáticamente cada minuto
   </script>
 </body>
 </html>
