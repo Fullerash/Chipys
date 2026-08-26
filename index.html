@@ -148,7 +148,7 @@
       background: var(--border-color);
     }
 
-    /* Card Producto con soporte de Imagen */
+    /* Card Producto */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -760,11 +760,11 @@
     };
 
     let waffleSeleccion = {
-      base: "Nutella",
-      helados: ["Vainilla", "Chocolate"],
-      fruta: "Frutilla",
-      toppings: ["Oreo molida", "Mini M&M"],
-      salsa: "Chocolate"
+      base: null,
+      helados: [],
+      fruta: null,
+      toppings: [],
+      salsa: null
     };
 
     // ==========================================
@@ -779,11 +779,11 @@
     };
 
     let copaSeleccion = {
-      helados: ["Vainilla", "Cookies & Cream", "Chocolate", "Frutos del bosque", "Chirimoya alegre"],
-      donut: "Chocolate",
-      fruta: "Frutilla",
-      toppings: ["Oreo molida", "Mini M&M"],
-      salsa: "Chocolate"
+      helados: [],
+      donut: null,
+      fruta: null,
+      toppings: [],
+      salsa: null
     };
 
     // ==========================================
@@ -1031,6 +1031,13 @@
         toggleScheduleModal(true);
         return;
       }
+      waffleSeleccion = {
+        base: null,
+        helados: [],
+        fruta: null,
+        toppings: [],
+        salsa: null
+      };
       renderOpcionesWaffle();
       toggleWaffleModal(true);
     }
@@ -1087,9 +1094,7 @@
     function selectWaffleMulti(category, val, max, btnEl) {
       let list = waffleSeleccion[category];
       if (list.includes(val)) {
-        if (list.length > 1) {
-          list = list.filter(item => item !== val);
-        }
+        list = list.filter(item => item !== val);
       } else {
         if (list.length >= max) {
           list.shift();
@@ -1101,12 +1106,24 @@
     }
 
     function confirmarWaffle() {
+      if (!waffleSeleccion.base) {
+        alert("Por favor selecciona 1 base para tu Waffle.");
+        return;
+      }
       if (waffleSeleccion.helados.length !== 2) {
         alert("Por favor selecciona 2 sabores de helado.");
         return;
       }
+      if (!waffleSeleccion.fruta) {
+        alert("Por favor selecciona 1 fruta.");
+        return;
+      }
       if (waffleSeleccion.toppings.length !== 2) {
         alert("Por favor selecciona 2 toppings.");
+        return;
+      }
+      if (!waffleSeleccion.salsa) {
+        alert("Por favor selecciona 1 salsa.");
         return;
       }
 
@@ -1140,6 +1157,13 @@
         toggleScheduleModal(true);
         return;
       }
+      copaSeleccion = {
+        helados: [],
+        donut: null,
+        fruta: null,
+        toppings: [],
+        salsa: null
+      };
       renderOpcionesCopa();
       toggleCopaModal(true);
     }
@@ -1196,9 +1220,7 @@
     function selectCopaMulti(category, val, max, btnEl) {
       let list = copaSeleccion[category];
       if (list.includes(val)) {
-        if (list.length > 1) {
-          list = list.filter(item => item !== val);
-        }
+        list = list.filter(item => item !== val);
       } else {
         if (list.length >= max) {
           list.shift();
@@ -1210,12 +1232,28 @@
     }
 
     function confirmarCopa() {
+      if (copaSeleccion.helados.length === 0) {
+        alert("Por favor selecciona al menos 1 sabor de helado (máximo 5).");
+        return;
+      }
+      if (!copaSeleccion.donut) {
+        alert("Por favor selecciona 1 sabor de Mini Donut.");
+        return;
+      }
+      if (!copaSeleccion.fruta) {
+        alert("Por favor selecciona 1 fruta.");
+        return;
+      }
       if (copaSeleccion.toppings.length !== 2) {
         alert("Por favor selecciona 2 toppings.");
         return;
       }
+      if (!copaSeleccion.salsa) {
+        alert("Por favor selecciona 1 salsa.");
+        return;
+      }
 
-      const detalleCopa = `Helados (5 bolas): ${copaSeleccion.helados.join(', ')} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${copaSeleccion.toppings.join(', ')} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
+      const detalleCopa = `Helados (${copaSeleccion.helados.length} bolas): ${copaSeleccion.helados.join(', ')} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${copaSeleccion.toppings.join(', ')} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
       const key = `copa_${Date.now()}`;
 
       carrito.push({
