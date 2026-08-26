@@ -554,7 +554,7 @@
     </button>
   </div>
 
-  <!-- Modal Personalizador de Waffles -->
+  <!-- Modal Personalizador de Waffle -->
   <div class="modal-overlay" id="waffle-modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -595,6 +595,51 @@
 
       <button class="btn-add" style="padding: 12px;" onclick="confirmarWaffle()">
         + Agregar Waffle al Carrito ($6.500)
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Personalizador de Copa Helada -->
+  <div class="modal-overlay" id="copa-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">🍨 Personaliza tu Copa Helada</h3>
+        <button class="modal-close" onclick="toggleCopaModal(false)">&times;</button>
+      </div>
+
+      <div class="cart-items-list" style="margin-bottom: 10px;">
+        <div class="options-container">
+          <span class="options-label">🍦 1. Sabores de Helado (Elige hasta 5 bolas):</span>
+          <div class="options-grid" id="copa-helado-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">🍩 2. Mini Donuts (Elige 1):</span>
+          <div class="options-grid" id="copa-donut-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">🍓 3. Fruta (Elige 1):</span>
+          <div class="options-grid" id="copa-fruta-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">✨ 4. Toppings (Elige 2):</span>
+          <div class="options-grid" id="copa-toppings-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">🍯 5. Salsa (Elige 1):</span>
+          <div class="options-grid" id="copa-salsa-options"></div>
+        </div>
+
+        <div style="background: var(--bg-card-alt); padding: 8px 10px; border-radius: 8px; font-size: 0.78rem; color: var(--text-muted);">
+          🤍 Incluye Crema Chantilly
+        </div>
+      </div>
+
+      <button class="btn-add" style="padding: 12px;" onclick="confirmarCopa()">
+        + Agregar Copa Helada al Carrito ($6.500)
       </button>
     </div>
   </div>
@@ -704,7 +749,7 @@
     const RECARGO_EMPAQUE_WAFFLE = 200;
 
     // ==========================================
-    // OPCIONES PERSONALIZABLES DE WAFFLES
+    // OPCIONES PERSONALIZABLES DE WAFFLE
     // ==========================================
     const WAFFLE_OPCIONES = {
       bases: ["Nutella", "Manjar"],
@@ -717,6 +762,25 @@
     let waffleSeleccion = {
       base: "Nutella",
       helados: ["Vainilla", "Chocolate"],
+      fruta: "Frutilla",
+      toppings: ["Oreo molida", "Mini M&M"],
+      salsa: "Chocolate"
+    };
+
+    // ==========================================
+    // OPCIONES PERSONALIZABLES DE COPA HELADA
+    // ==========================================
+    const COPA_OPCIONES = {
+      helados: ["Vainilla", "Cookies & Cream", "Chocolate", "Frutos del bosque", "Chirimoya alegre"],
+      donuts: ["Chocolate blanco", "Frutilla", "Chocolate", "Chocolate maní"],
+      frutas: ["Frutilla", "Plátano"],
+      toppings: ["Sprinkles de chocolate", "Chispitas de colores", "Oreo molida", "Mini M&M", "Mostacillas de corazón"],
+      salsas: ["Manjar", "Frambuesa", "Chocolate"]
+    };
+
+    let copaSeleccion = {
+      helados: ["Vainilla", "Cookies & Cream", "Chocolate", "Frutos del bosque", "Chirimoya alegre"],
+      donut: "Chocolate",
       fruta: "Frutilla",
       toppings: ["Oreo molida", "Mini M&M"],
       salsa: "Chocolate"
@@ -842,10 +906,11 @@
         categoria: "Pastelería",
         icono: "🧁",
         productos: [
-          { id: 70, nombre: "Muffin", desc: "1 por $1.700 o 2 por $3.000.", precio: 1700 },
-          { id: 71, nombre: "Galletas", desc: "1 por $1.100 o 3 por $3.000.", precio: 1000 },
-          { id: 72, nombre: "Media Luna", desc: "1 por $1.000 o 3 por $2.500.", precio: 1000 },
-          { id: 73, nombre: "Waffles Personalizados", desc: "Base + 2 Sabores de helado + 1 Fruta + 2 Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true }
+          { id: 70, nombre: "Waffle", desc: "Base + 2 Sabores de helado + 1 Fruta + 2 Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true },
+          { id: 71, nombre: "Copa Helada", desc: "5 Bolas de helado + 1 Mini Donut + 1 Fruta + 2 Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/copa-helada.jpeg", soloRetiro: true, esCopa: true },
+          { id: 72, nombre: "Muffin", desc: "1 por $1.700 o 2 por $3.000.", precio: 1700 },
+          { id: 73, nombre: "Galletas", desc: "1 por $1.100 o 3 por $3.000.", precio: 1000 },
+          { id: 74, nombre: "Media Luna", desc: "1 por $1.000 o 3 por $2.500.", precio: 1000 }
         ]
       }
     ];
@@ -959,7 +1024,7 @@
     }
 
     // ==========================================
-    // PERSONALIZADOR DE WAFFLES
+    // PERSONALIZADOR DE WAFFLE
     // ==========================================
     function abrirPersonalizadorWaffle() {
       if (!localAbierto) {
@@ -976,7 +1041,6 @@
     }
 
     function renderOpcionesWaffle() {
-      // Base
       const baseEl = document.getElementById('waffle-base-options');
       baseEl.innerHTML = WAFFLE_OPCIONES.bases.map(b => `
         <button class="opt-chip ${waffleSeleccion.base === b ? 'selected' : ''}" onclick="selectWaffleSingle('base', '${b}', this)">
@@ -984,7 +1048,6 @@
         </button>
       `).join('');
 
-      // Helados (2)
       const heladoEl = document.getElementById('waffle-helado-options');
       heladoEl.innerHTML = WAFFLE_OPCIONES.helados.map(h => `
         <button class="opt-chip ${waffleSeleccion.helados.includes(h) ? 'selected' : ''}" onclick="selectWaffleMulti('helados', '${h}', 2, this)">
@@ -992,7 +1055,6 @@
         </button>
       `).join('');
 
-      // Fruta (1)
       const frutaEl = document.getElementById('waffle-fruta-options');
       frutaEl.innerHTML = WAFFLE_OPCIONES.frutas.map(f => `
         <button class="opt-chip ${waffleSeleccion.fruta === f ? 'selected' : ''}" onclick="selectWaffleSingle('fruta', '${f}', this)">
@@ -1000,7 +1062,6 @@
         </button>
       `).join('');
 
-      // Toppings (2)
       const topEl = document.getElementById('waffle-toppings-options');
       topEl.innerHTML = WAFFLE_OPCIONES.toppings.map(t => `
         <button class="opt-chip ${waffleSeleccion.toppings.includes(t) ? 'selected' : ''}" onclick="selectWaffleMulti('toppings', '${t}', 2, this)">
@@ -1008,7 +1069,6 @@
         </button>
       `).join('');
 
-      // Salsa (1)
       const salsaEl = document.getElementById('waffle-salsa-options');
       salsaEl.innerHTML = WAFFLE_OPCIONES.salsas.map(s => `
         <button class="opt-chip ${waffleSeleccion.salsa === s ? 'selected' : ''}" onclick="selectWaffleSingle('salsa', '${s}', this)">
@@ -1050,13 +1110,13 @@
         return;
       }
 
-      const detalleWaffle = `Base ${waffleSeleccion.base} | Helados: ${waffleSeleccion.helados.join(', ')} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${waffleSeleccion.toppings.join(', ')} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
+      const detalleWaffle = `Base: ${waffleSeleccion.base} | Helados: ${waffleSeleccion.helados.join(', ')} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${waffleSeleccion.toppings.join(', ')} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
       const key = `waffle_${Date.now()}`;
 
       carrito.push({
         key: key,
-        id: 73,
-        nombre: "Waffles Personalizados",
+        id: 70,
+        nombre: "Waffle",
         detalle: detalleWaffle,
         precio: 6500,
         qty: 1,
@@ -1069,6 +1129,111 @@
       }
 
       toggleWaffleModal(false);
+      actualizarUI();
+    }
+
+    // ==========================================
+    // PERSONALIZADOR DE COPA HELADA
+    // ==========================================
+    function abrirPersonalizadorCopa() {
+      if (!localAbierto) {
+        toggleScheduleModal(true);
+        return;
+      }
+      renderOpcionesCopa();
+      toggleCopaModal(true);
+    }
+
+    function toggleCopaModal(show) {
+      const modal = document.getElementById('copa-modal');
+      modal.classList.toggle('open', show);
+    }
+
+    function renderOpcionesCopa() {
+      const heladoEl = document.getElementById('copa-helado-options');
+      heladoEl.innerHTML = COPA_OPCIONES.helados.map(h => `
+        <button class="opt-chip ${copaSeleccion.helados.includes(h) ? 'selected' : ''}" onclick="selectCopaMulti('helados', '${h}', 5, this)">
+          ${h}
+        </button>
+      `).join('');
+
+      const donutEl = document.getElementById('copa-donut-options');
+      donutEl.innerHTML = COPA_OPCIONES.donuts.map(d => `
+        <button class="opt-chip ${copaSeleccion.donut === d ? 'selected' : ''}" onclick="selectCopaSingle('donut', '${d}', this)">
+          ${d}
+        </button>
+      `).join('');
+
+      const frutaEl = document.getElementById('copa-fruta-options');
+      frutaEl.innerHTML = COPA_OPCIONES.frutas.map(f => `
+        <button class="opt-chip ${copaSeleccion.fruta === f ? 'selected' : ''}" onclick="selectCopaSingle('fruta', '${f}', this)">
+          ${f}
+        </button>
+      `).join('');
+
+      const topEl = document.getElementById('copa-toppings-options');
+      topEl.innerHTML = COPA_OPCIONES.toppings.map(t => `
+        <button class="opt-chip ${copaSeleccion.toppings.includes(t) ? 'selected' : ''}" onclick="selectCopaMulti('toppings', '${t}', 2, this)">
+          ${t}
+        </button>
+      `).join('');
+
+      const salsaEl = document.getElementById('copa-salsa-options');
+      salsaEl.innerHTML = COPA_OPCIONES.salsas.map(s => `
+        <button class="opt-chip ${copaSeleccion.salsa === s ? 'selected' : ''}" onclick="selectCopaSingle('salsa', '${s}', this)">
+          ${s}
+        </button>
+      `).join('');
+    }
+
+    function selectCopaSingle(category, val, btnEl) {
+      copaSeleccion[category] = val;
+      const chips = btnEl.parentElement.querySelectorAll('.opt-chip');
+      chips.forEach(c => c.classList.remove('selected'));
+      btnEl.classList.add('selected');
+    }
+
+    function selectCopaMulti(category, val, max, btnEl) {
+      let list = copaSeleccion[category];
+      if (list.includes(val)) {
+        if (list.length > 1) {
+          list = list.filter(item => item !== val);
+        }
+      } else {
+        if (list.length >= max) {
+          list.shift();
+        }
+        list.push(val);
+      }
+      copaSeleccion[category] = list;
+      renderOpcionesCopa();
+    }
+
+    function confirmarCopa() {
+      if (copaSeleccion.toppings.length !== 2) {
+        alert("Por favor selecciona 2 toppings.");
+        return;
+      }
+
+      const detalleCopa = `Helados (5 bolas): ${copaSeleccion.helados.join(', ')} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${copaSeleccion.toppings.join(', ')} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
+      const key = `copa_${Date.now()}`;
+
+      carrito.push({
+        key: key,
+        id: 71,
+        nombre: "Copa Helada",
+        detalle: detalleCopa,
+        precio: 6500,
+        qty: 1,
+        soloRetiro: true
+      });
+
+      if (tipoEntrega === 'delivery') {
+        alert("⚠️ La Copa Helada no está disponible para Delivery para evitar que se derrita.\n\nTu pedido se configuró automáticamente para 'Retiro en Local'.");
+        setOrderType('retiro');
+      }
+
+      toggleCopaModal(false);
       actualizarUI();
     }
 
@@ -1153,11 +1318,16 @@
             `;
           }
 
-          const btnAction = p.esWaffle 
-            ? `onclick="abrirPersonalizadorWaffle()"` 
-            : `onclick="agregarAlCarrito(${p.id})"`;
+          let btnAction = `onclick="agregarAlCarrito(${p.id})"`;
+          let btnTexto = `+ Agregar al pedido`;
 
-          const btnTexto = p.esWaffle ? `🧇 Personalizar y Agregar` : `+ Agregar al pedido`;
+          if (p.esWaffle) {
+            btnAction = `onclick="abrirPersonalizadorWaffle()"`;
+            btnTexto = `🧇 Personalizar y Agregar`;
+          } else if (p.esCopa) {
+            btnAction = `onclick="abrirPersonalizadorCopa()"`;
+            btnTexto = `🍨 Personalizar y Agregar`;
+          }
 
           catHtml += `
             <div class="card">
@@ -1255,7 +1425,7 @@
       }
 
       if (tipoEntrega === 'delivery' && prodObj.soloRetiro) {
-        alert("⚠️ Los Waffles incluyen helado y no están disponibles para Delivery para evitar que se derritan.\n\nTu pedido se configuró automáticamente para 'Retiro en Local'.");
+        alert("⚠️ Este producto no está disponible para Delivery para evitar que se derrita.\n\nTu pedido se configuró automáticamente para 'Retiro en Local'.");
         setOrderType('retiro');
       }
 
@@ -1280,7 +1450,7 @@
 
     function setOrderType(tipo) {
       if (tipo === 'delivery' && tieneProductosSoloRetiro()) {
-        alert("⚠️ Tienes Waffles en tu pedido. Debido a que contienen helado, este producto no está disponible para Delivery.\n\nPor favor elije 'Retiro en Local' o retira los Waffles de tu pedido.");
+        alert("⚠️ Tienes productos en tu pedido (Waffle / Copa Helada) que contienen helado y no están disponibles para Delivery.\n\nPor favor elije 'Retiro en Local' o retira estos productos de tu pedido.");
         tipo = 'retiro';
       }
 
@@ -1333,7 +1503,7 @@
         total += itemSub;
         totalItems += item.qty;
 
-        if (item.soloRetiro && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
+        if (item.nombre === "Waffle" && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
           recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * item.qty);
         }
 
@@ -1407,7 +1577,7 @@
       let direccion = document.getElementById('cust-address').value.trim();
 
       if (tipoEntrega === 'delivery' && tieneProductosSoloRetiro()) {
-        alert("⚠️ Tienes Waffles en tu pedido, los cuales no están disponibles para delivery. Tu pedido se enviará como Retiro en Local.");
+        alert("⚠️ Tienes Waffle o Copa Helada en tu pedido, los cuales no están disponibles para delivery. Tu pedido se enviará como Retiro en Local.");
         setOrderType('retiro');
       }
 
@@ -1439,7 +1609,7 @@
         if (i.detalle) {
           texto += `   ↳ ${i.detalle}\n`;
         }
-        if (i.soloRetiro && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
+        if (i.nombre === "Waffle" && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
           recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * i.qty);
         }
       });
