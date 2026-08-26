@@ -810,9 +810,9 @@
 
     let waffleSeleccion = {
       base: null,
-      helados: {}, // { "Vainilla": 2 }
+      helados: {},
       fruta: null,
-      toppings: {}, // { "Oreo molida": 1, "Mini M&M": 1 }
+      toppings: {},
       salsa: null
     };
 
@@ -828,7 +828,7 @@
     };
 
     let copaSeleccion = {
-      helados: {}, // { "Chirimoya alegre": 3, "Chocolate": 2 }
+      helados: {},
       donut: null,
       fruta: null,
       toppings: {},
@@ -1104,7 +1104,7 @@
         </button>
       `).join('');
 
-      // 2. Helados (Máximo 2 bolas en total)
+      // 2. Helados (Máximo 2 bolas)
       const totalHelados = Object.values(waffleSeleccion.helados).reduce((a, b) => a + b, 0);
       document.getElementById('waffle-helado-counter').innerText = `${totalHelados} / 2 bolas`;
 
@@ -1131,7 +1131,7 @@
         </button>
       `).join('');
 
-      // 4. Toppings (Máximo 2 porciones en total)
+      // 4. Toppings (Máximo 2 porciones)
       const totalToppings = Object.values(waffleSeleccion.toppings).reduce((a, b) => a + b, 0);
       document.getElementById('waffle-toppings-counter').innerText = `${totalToppings} / 2 porciones`;
 
@@ -1207,10 +1207,23 @@
         return;
       }
 
-      const heladosLista = Object.entries(waffleSeleccion.helados).map(([sabor, cant]) => `${cant > 1 ? cant + 'x ' : ''}${sabor}`).join(', ');
-      const toppingsLista = Object.entries(waffleSeleccion.toppings).map(([top, cant]) => `${cant > 1 ? cant + 'x ' : ''}${top}`).join(', ');
+      const heladosLista = Object.entries(waffleSeleccion.helados)
+        .map(([sabor, cant]) => `      - ${cant}x ${sabor}`)
+        .join('\n');
 
-      const detalleWaffle = `Base: ${waffleSeleccion.base} | Helados (${totalHelados} bolas): ${heladosLista} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${toppingsLista} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
+      const toppingsLista = Object.entries(waffleSeleccion.toppings)
+        .map(([top, cant]) => `      - ${cant}x ${top}`)
+        .join('\n');
+
+      const detalleWaffle = [
+        `   🍫 Base: 1x ${waffleSeleccion.base}`,
+        `   🍦 Helados (${totalHelados} bolas):\n${heladosLista}`,
+        `   🍓 Fruta: 1x ${waffleSeleccion.fruta}`,
+        `   ✨ Toppings:\n${toppingsLista}`,
+        `   🍯 Salsa: 1x ${waffleSeleccion.salsa}`,
+        `   🤍 Crema Chantilly`
+      ].join('\n');
+
       const key = `waffle_${Date.now()}`;
 
       carrito.push({
@@ -1257,7 +1270,7 @@
     }
 
     function renderOpcionesCopa() {
-      // 1. Helados (Máximo 5 bolas repartidas como quiera)
+      // 1. Helados (Hasta 5 bolas)
       const totalHelados = Object.values(copaSeleccion.helados).reduce((a, b) => a + b, 0);
       document.getElementById('copa-helado-counter').innerText = `${totalHelados} / 5 bolas`;
 
@@ -1292,7 +1305,7 @@
         </button>
       `).join('');
 
-      // 4. Toppings (Máximo 2 porciones)
+      // 4. Toppings (Hasta 2 porciones)
       const totalToppings = Object.values(copaSeleccion.toppings).reduce((a, b) => a + b, 0);
       document.getElementById('copa-toppings-counter').innerText = `${totalToppings} / 2 porciones`;
 
@@ -1368,10 +1381,23 @@
         return;
       }
 
-      const heladosLista = Object.entries(copaSeleccion.helados).map(([sabor, cant]) => `${cant > 1 ? cant + 'x ' : ''}${sabor}`).join(', ');
-      const toppingsLista = Object.entries(copaSeleccion.toppings).map(([top, cant]) => `${cant > 1 ? cant + 'x ' : ''}${top}`).join(', ');
+      const heladosLista = Object.entries(copaSeleccion.helados)
+        .map(([sabor, cant]) => `      - ${cant}x ${sabor}`)
+        .join('\n');
 
-      const detalleCopa = `Helados (${totalHelados} bolas): ${heladosLista} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${toppingsLista} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
+      const toppingsLista = Object.entries(copaSeleccion.toppings)
+        .map(([top, cant]) => `      - ${cant}x ${top}`)
+        .join('\n');
+
+      const detalleCopa = [
+        `   🍦 Helados (${totalHelados} bolas):\n${heladosLista}`,
+        `   🍩 Donut: 1x ${copaSeleccion.donut}`,
+        `   🍓 Fruta: 1x ${copaSeleccion.fruta}`,
+        `   ✨ Toppings:\n${toppingsLista}`,
+        `   🍯 Salsa: 1x ${copaSeleccion.salsa}`,
+        `   🤍 Crema Chantilly`
+      ].join('\n');
+
       const key = `copa_${Date.now()}`;
 
       carrito.push({
@@ -1665,7 +1691,7 @@
 
         let detalleHtml = '';
         if (item.detalle) {
-          detalleHtml = `<div style="font-size: 0.72rem; color: var(--accent-yellow); margin-top: 3px;">${item.detalle}</div>`;
+          detalleHtml = `<div style="font-size: 0.72rem; color: var(--accent-yellow); margin-top: 3px; white-space: pre-line;">${item.detalle}</div>`;
         }
 
         cartList.innerHTML += `
@@ -1763,7 +1789,7 @@
         total += sub;
         texto += `• ${i.qty}x ${i.nombre} - $${sub.toLocaleString('es-CL')}\n`;
         if (i.detalle) {
-          texto += `   ↳ ${i.detalle}\n`;
+          texto += `${i.detalle}\n`;
         }
         if (i.nombre === "Waffle" && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
           recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * i.qty);
