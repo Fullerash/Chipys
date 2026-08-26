@@ -569,7 +569,7 @@
         </div>
 
         <div class="options-container">
-          <span class="options-label">🍦 2. Sabores de Helado (Elige 2):</span>
+          <span class="options-label">🍦 2. Sabores de Helado (1 o 2 a elección):</span>
           <div class="options-grid" id="waffle-helado-options"></div>
         </div>
 
@@ -579,7 +579,7 @@
         </div>
 
         <div class="options-container">
-          <span class="options-label">✨ 4. Toppings (Elige 2):</span>
+          <span class="options-label">✨ 4. Toppings (1 o 2 a elección):</span>
           <div class="options-grid" id="waffle-toppings-options"></div>
         </div>
 
@@ -624,7 +624,7 @@
         </div>
 
         <div class="options-container">
-          <span class="options-label">✨ 4. Toppings (Elige 2):</span>
+          <span class="options-label">✨ 4. Toppings (1 o 2 a elección):</span>
           <div class="options-grid" id="copa-toppings-options"></div>
         </div>
 
@@ -906,8 +906,8 @@
         categoria: "Pastelería",
         icono: "🧁",
         productos: [
-          { id: 70, nombre: "Waffle", desc: "Base + 2 Sabores de helado + 1 Fruta + 2 Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true },
-          { id: 71, nombre: "Copa Helada", desc: "5 Bolas de helado + 1 Mini Donut + 1 Fruta + 2 Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/copa-helada.jpeg", soloRetiro: true, esCopa: true },
+          { id: 70, nombre: "Waffle", desc: "Base + Helado + Fruta + Toppings + Crema chantilly + Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true },
+          { id: 71, nombre: "Copa Helada", desc: "Bolas de helado + 1 Mini Donut + 1 Fruta + Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/copa-helada.jpeg", soloRetiro: true, esCopa: true },
           { id: 72, nombre: "Muffin", desc: "1 por $1.700 o 2 por $3.000.", precio: 1700 },
           { id: 73, nombre: "Galletas", desc: "1 por $1.100 o 3 por $3.000.", precio: 1000 },
           { id: 74, nombre: "Media Luna", desc: "1 por $1.000 o 3 por $2.500.", precio: 1000 }
@@ -1110,16 +1110,16 @@
         alert("Por favor selecciona 1 base para tu Waffle.");
         return;
       }
-      if (waffleSeleccion.helados.length !== 2) {
-        alert("Por favor selecciona 2 sabores de helado.");
+      if (waffleSeleccion.helados.length === 0) {
+        alert("Por favor selecciona al menos 1 sabor de helado.");
         return;
       }
       if (!waffleSeleccion.fruta) {
         alert("Por favor selecciona 1 fruta.");
         return;
       }
-      if (waffleSeleccion.toppings.length !== 2) {
-        alert("Por favor selecciona 2 toppings.");
+      if (waffleSeleccion.toppings.length === 0) {
+        alert("Por favor selecciona al menos 1 topping.");
         return;
       }
       if (!waffleSeleccion.salsa) {
@@ -1127,7 +1127,15 @@
         return;
       }
 
-      const detalleWaffle = `Base: ${waffleSeleccion.base} | Helados: ${waffleSeleccion.helados.join(', ')} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${waffleSeleccion.toppings.join(', ')} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
+      const heladoTexto = waffleSeleccion.helados.length === 1 
+        ? `${waffleSeleccion.helados[0]} (Doble ración)` 
+        : waffleSeleccion.helados.join(', ');
+
+      const toppingsTexto = waffleSeleccion.toppings.length === 1 
+        ? `${waffleSeleccion.toppings[0]} (Doble ración)` 
+        : waffleSeleccion.toppings.join(', ');
+
+      const detalleWaffle = `Base: ${waffleSeleccion.base} | Helados: ${heladoTexto} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${toppingsTexto} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
       const key = `waffle_${Date.now()}`;
 
       carrito.push({
@@ -1244,8 +1252,8 @@
         alert("Por favor selecciona 1 fruta.");
         return;
       }
-      if (copaSeleccion.toppings.length !== 2) {
-        alert("Por favor selecciona 2 toppings.");
+      if (copaSeleccion.toppings.length === 0) {
+        alert("Por favor selecciona al menos 1 topping.");
         return;
       }
       if (!copaSeleccion.salsa) {
@@ -1253,7 +1261,18 @@
         return;
       }
 
-      const detalleCopa = `Helados (${copaSeleccion.helados.length} bolas): ${copaSeleccion.helados.join(', ')} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${copaSeleccion.toppings.join(', ')} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
+      let heladosTexto = '';
+      if (copaSeleccion.helados.length === 1) {
+        heladosTexto = `${copaSeleccion.helados[0]} (5 bolas del mismo sabor)`;
+      } else {
+        heladosTexto = `${copaSeleccion.helados.join(', ')} (${copaSeleccion.helados.length} sabores)`;
+      }
+
+      const toppingsTexto = copaSeleccion.toppings.length === 1 
+        ? `${copaSeleccion.toppings[0]} (Doble ración)` 
+        : copaSeleccion.toppings.join(', ');
+
+      const detalleCopa = `Helados: ${heladosTexto} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${toppingsTexto} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
       const key = `copa_${Date.now()}`;
 
       carrito.push({
