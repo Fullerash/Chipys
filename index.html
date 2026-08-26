@@ -554,6 +554,51 @@
     </button>
   </div>
 
+  <!-- Modal Personalizador de Waffles -->
+  <div class="modal-overlay" id="waffle-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">🧇 Personaliza tu Waffle</h3>
+        <button class="modal-close" onclick="toggleWaffleModal(false)">&times;</button>
+      </div>
+
+      <div class="cart-items-list" style="margin-bottom: 10px;">
+        <div class="options-container">
+          <span class="options-label">🍫 1. Base (Elige 1):</span>
+          <div class="options-grid" id="waffle-base-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">🍦 2. Sabores de Helado (Elige 2):</span>
+          <div class="options-grid" id="waffle-helado-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">🍓 3. Fruta (Elige 1):</span>
+          <div class="options-grid" id="waffle-fruta-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">✨ 4. Toppings (Elige 2):</span>
+          <div class="options-grid" id="waffle-toppings-options"></div>
+        </div>
+
+        <div class="options-container">
+          <span class="options-label">🍯 5. Salsa (Elige 1):</span>
+          <div class="options-grid" id="waffle-salsa-options"></div>
+        </div>
+
+        <div style="background: var(--bg-card-alt); padding: 8px 10px; border-radius: 8px; font-size: 0.78rem; color: var(--text-muted);">
+          🤍 Incluye Crema Chantilly
+        </div>
+      </div>
+
+      <button class="btn-add" style="padding: 12px;" onclick="confirmarWaffle()">
+        + Agregar Waffle al Carrito ($6.500)
+      </button>
+    </div>
+  </div>
+
   <!-- Modal Checkout -->
   <div class="modal-overlay" id="cart-modal">
     <div class="modal-content">
@@ -589,7 +634,7 @@
             🍽️ Para Servir
           </button>
           <button class="type-btn" id="btn-service-llevar" onclick="setServiceType('Para Llevar')">
-            🛍️ Para Llevar
+            🛍️ Para Llevar (+ $200 x Waffle)
           </button>
         </div>
       </div>
@@ -656,20 +701,39 @@
     // ==========================================
     const TELEFONO_WHATSAPP = "56941971256"; 
     const PRECIO_COMBO = 2700;
+    const RECARGO_EMPAQUE_WAFFLE = 200;
+
+    // ==========================================
+    // OPCIONES PERSONALIZABLES DE WAFFLES
+    // ==========================================
+    const WAFFLE_OPCIONES = {
+      bases: ["Nutella", "Manjar"],
+      helados: ["Vainilla", "Cookies & Cream", "Chocolate", "Frutos del bosque", "Chirimoya alegre"],
+      frutas: ["Frutilla", "Plátano"],
+      toppings: ["Sprinkles de chocolate", "Chispitas de colores", "Oreo molida", "Mini M&M", "Mostacillas de corazón"],
+      salsas: ["Manjar", "Frambuesa", "Chocolate"]
+    };
+
+    let waffleSeleccion = {
+      base: "Nutella",
+      helados: ["Vainilla", "Chocolate"],
+      fruta: "Frutilla",
+      toppings: ["Oreo molida", "Mini M&M"],
+      salsa: "Chocolate"
+    };
 
     // ==========================================
     // CONFIGURACIÓN DE HORARIOS DE CHIPPYS
     // 0: Domingo, 1: Lunes, 2: Martes, 3: Miércoles, 4: Jueves, 5: Viernes, 6: Sábado
-    // (Ajusta los horarios según la jornada real de tu local)
     // ==========================================
     const HORARIOS_ATENCION = {
-      1: { nombre: "Lunes", abierto: false, turnos: [] }, // Cerrado
-      2: { nombre: "Martes", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
-      3: { nombre: "Miércoles", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
-      4: { nombre: "Jueves", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
-      5: { nombre: "Viernes", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
-      6: { nombre: "Sábado", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
-      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "12:00", hasta: "20:00" }] }
+      1: { nombre: "Lunes", abierto: false, turnos: [] },
+      2: { nombre: "Martes", abierto: true, turnos: [{ desde: "18:00", hasta: "23:30" }] },
+      3: { nombre: "Miércoles", abierto: true, turnos: [{ desde: "18:00", hasta: "23:30" }] },
+      4: { nombre: "Jueves", abierto: true, turnos: [{ desde: "18:00", hasta: "23:30" }] },
+      5: { nombre: "Viernes", abierto: true, turnos: [{ desde: "18:00", hasta: "00:30" }] },
+      6: { nombre: "Sábado", abierto: true, turnos: [{ desde: "18:00", hasta: "00:30" }] },
+      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "18:00", hasta: "23:00" }] }
     };
 
     let localAbierto = false;
@@ -780,7 +844,8 @@
         productos: [
           { id: 70, nombre: "Muffin", desc: "1 por $1.700 o 2 por $3.000.", precio: 1700 },
           { id: 71, nombre: "Galletas", desc: "1 por $1.100 o 3 por $3.000.", precio: 1000 },
-          { id: 72, nombre: "Media Luna", desc: "1 por $1.000 o 3 por $2.500.", precio: 1000 }
+          { id: 72, nombre: "Media Luna", desc: "1 por $1.000 o 3 por $2.500.", precio: 1000 },
+          { id: 73, nombre: "Waffles Personalizados", desc: "Base + 2 Sabores de helado + 1 Fruta + 2 Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true }
         ]
       }
     ];
@@ -808,7 +873,6 @@
           const minDesde = hD * 60 + mD;
           let minHasta = hH * 60 + mH;
 
-          // Si el horario pasa de medianoche (ej. 18:00 a 00:30)
           if (minHasta < minDesde) {
             if (minutosActuales >= minDesde || minutosActuales <= minHasta) {
               abierto = true;
@@ -874,7 +938,7 @@
       const hoy = new Date().getDay();
       container.innerHTML = '';
 
-      const diasOrden = [1, 2, 3, 4, 5, 6, 0]; // Lunes a Domingo
+      const diasOrden = [1, 2, 3, 4, 5, 6, 0];
 
       diasOrden.forEach(d => {
         const item = HORARIOS_ATENCION[d];
@@ -892,6 +956,120 @@
           </div>
         `;
       });
+    }
+
+    // ==========================================
+    // PERSONALIZADOR DE WAFFLES
+    // ==========================================
+    function abrirPersonalizadorWaffle() {
+      if (!localAbierto) {
+        toggleScheduleModal(true);
+        return;
+      }
+      renderOpcionesWaffle();
+      toggleWaffleModal(true);
+    }
+
+    function toggleWaffleModal(show) {
+      const modal = document.getElementById('waffle-modal');
+      modal.classList.toggle('open', show);
+    }
+
+    function renderOpcionesWaffle() {
+      // Base
+      const baseEl = document.getElementById('waffle-base-options');
+      baseEl.innerHTML = WAFFLE_OPCIONES.bases.map(b => `
+        <button class="opt-chip ${waffleSeleccion.base === b ? 'selected' : ''}" onclick="selectWaffleSingle('base', '${b}', this)">
+          ${b}
+        </button>
+      `).join('');
+
+      // Helados (2)
+      const heladoEl = document.getElementById('waffle-helado-options');
+      heladoEl.innerHTML = WAFFLE_OPCIONES.helados.map(h => `
+        <button class="opt-chip ${waffleSeleccion.helados.includes(h) ? 'selected' : ''}" onclick="selectWaffleMulti('helados', '${h}', 2, this)">
+          ${h}
+        </button>
+      `).join('');
+
+      // Fruta (1)
+      const frutaEl = document.getElementById('waffle-fruta-options');
+      frutaEl.innerHTML = WAFFLE_OPCIONES.frutas.map(f => `
+        <button class="opt-chip ${waffleSeleccion.fruta === f ? 'selected' : ''}" onclick="selectWaffleSingle('fruta', '${f}', this)">
+          ${f}
+        </button>
+      `).join('');
+
+      // Toppings (2)
+      const topEl = document.getElementById('waffle-toppings-options');
+      topEl.innerHTML = WAFFLE_OPCIONES.toppings.map(t => `
+        <button class="opt-chip ${waffleSeleccion.toppings.includes(t) ? 'selected' : ''}" onclick="selectWaffleMulti('toppings', '${t}', 2, this)">
+          ${t}
+        </button>
+      `).join('');
+
+      // Salsa (1)
+      const salsaEl = document.getElementById('waffle-salsa-options');
+      salsaEl.innerHTML = WAFFLE_OPCIONES.salsas.map(s => `
+        <button class="opt-chip ${waffleSeleccion.salsa === s ? 'selected' : ''}" onclick="selectWaffleSingle('salsa', '${s}', this)">
+          ${s}
+        </button>
+      `).join('');
+    }
+
+    function selectWaffleSingle(category, val, btnEl) {
+      waffleSeleccion[category] = val;
+      const chips = btnEl.parentElement.querySelectorAll('.opt-chip');
+      chips.forEach(c => c.classList.remove('selected'));
+      btnEl.classList.add('selected');
+    }
+
+    function selectWaffleMulti(category, val, max, btnEl) {
+      let list = waffleSeleccion[category];
+      if (list.includes(val)) {
+        if (list.length > 1) {
+          list = list.filter(item => item !== val);
+        }
+      } else {
+        if (list.length >= max) {
+          list.shift();
+        }
+        list.push(val);
+      }
+      waffleSeleccion[category] = list;
+      renderOpcionesWaffle();
+    }
+
+    function confirmarWaffle() {
+      if (waffleSeleccion.helados.length !== 2) {
+        alert("Por favor selecciona 2 sabores de helado.");
+        return;
+      }
+      if (waffleSeleccion.toppings.length !== 2) {
+        alert("Por favor selecciona 2 toppings.");
+        return;
+      }
+
+      const detalleWaffle = `Base ${waffleSeleccion.base} | Helados: ${waffleSeleccion.helados.join(', ')} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${waffleSeleccion.toppings.join(', ')} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
+      const key = `waffle_${Date.now()}`;
+
+      carrito.push({
+        key: key,
+        id: 73,
+        nombre: "Waffles Personalizados",
+        detalle: detalleWaffle,
+        precio: 6500,
+        qty: 1,
+        soloRetiro: true
+      });
+
+      if (tipoEntrega === 'delivery') {
+        alert("⚠️ Los Waffles incluyen helado y no están disponibles para Delivery para evitar que se derritan.\n\nTu pedido se configuró automáticamente para 'Retiro en Local'.");
+        setOrderType('retiro');
+      }
+
+      toggleWaffleModal(false);
+      actualizarUI();
     }
 
     // ==========================================
@@ -975,6 +1153,12 @@
             `;
           }
 
+          const btnAction = p.esWaffle 
+            ? `onclick="abrirPersonalizadorWaffle()"` 
+            : `onclick="agregarAlCarrito(${p.id})"`;
+
+          const btnTexto = p.esWaffle ? `🧇 Personalizar y Agregar` : `+ Agregar al pedido`;
+
           catHtml += `
             <div class="card">
               ${imgHtml}
@@ -986,7 +1170,7 @@
                 <div class="card-desc">${p.desc}</div>
                 ${opcionesHtml}
                 ${comboHtml}
-                <button class="btn-add" onclick="agregarAlCarrito(${p.id})">+ Agregar al pedido</button>
+                <button class="btn-add" ${btnAction}>${btnTexto}</button>
               </div>
             </div>
           `;
@@ -1018,6 +1202,10 @@
         totalCard += PRECIO_COMBO;
       }
       document.getElementById(`price-tag-${prodId}`).innerText = `$${totalCard.toLocaleString('es-CL')}`;
+    }
+
+    function tieneProductosSoloRetiro() {
+      return carrito.some(item => item.soloRetiro);
     }
 
     function agregarAlCarrito(prodId) {
@@ -1061,8 +1249,14 @@
           id: prodId,
           nombre: tituloItem,
           precio: precioFinal,
-          qty: 1
+          qty: 1,
+          soloRetiro: prodObj.soloRetiro || false
         });
+      }
+
+      if (tipoEntrega === 'delivery' && prodObj.soloRetiro) {
+        alert("⚠️ Los Waffles incluyen helado y no están disponibles para Delivery para evitar que se derritan.\n\nTu pedido se configuró automáticamente para 'Retiro en Local'.");
+        setOrderType('retiro');
       }
 
       const comboCheck = document.getElementById(`combo-${prodId}`);
@@ -1085,6 +1279,11 @@
     }
 
     function setOrderType(tipo) {
+      if (tipo === 'delivery' && tieneProductosSoloRetiro()) {
+        alert("⚠️ Tienes Waffles en tu pedido. Debido a que contienen helado, este producto no está disponible para Delivery.\n\nPor favor elije 'Retiro en Local' o retira los Waffles de tu pedido.");
+        tipo = 'retiro';
+      }
+
       tipoEntrega = tipo;
       document.getElementById('btn-delivery').classList.toggle('active', tipo === 'delivery');
       document.getElementById('btn-retiro').classList.toggle('active', tipo === 'retiro');
@@ -1099,12 +1298,15 @@
         addrInput.style.display = "block";
         pickupOptions.style.display = "none";
       }
+
+      actualizarUI();
     }
 
     function setServiceType(tipo) {
       tipoServicio = tipo;
       document.getElementById('btn-service-mesa').classList.toggle('active', tipo === 'Para Servir (Mesa)');
       document.getElementById('btn-service-llevar').classList.toggle('active', tipo === 'Para Llevar');
+      actualizarUI();
     }
 
     function setPaymentMethod(metodo) {
@@ -1117,6 +1319,7 @@
     function actualizarUI() {
       let total = 0;
       let totalItems = 0;
+      let recargoLlevarWaffles = 0;
 
       const cartList = document.getElementById('cart-list');
       cartList.innerHTML = '';
@@ -1130,11 +1333,21 @@
         total += itemSub;
         totalItems += item.qty;
 
+        if (item.soloRetiro && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
+          recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * item.qty);
+        }
+
+        let detalleHtml = '';
+        if (item.detalle) {
+          detalleHtml = `<div style="font-size: 0.72rem; color: var(--accent-yellow); margin-top: 3px;">${item.detalle}</div>`;
+        }
+
         cartList.innerHTML += `
           <div class="cart-item">
             <div>
               <div class="cart-item-name">${item.nombre}</div>
-              <div class="cart-item-sub">$${item.precio.toLocaleString('es-CL')} c/u</div>
+              <div class="cart-item-sub">$${item.precio.toLocaleString('es-CL')} c/u ${item.soloRetiro ? '<span style="color:var(--accent-orange); font-size:0.75rem;">(Solo Retiro)</span>' : ''}</div>
+              ${detalleHtml}
             </div>
             <div class="cart-item-qty">
               <button class="btn-qty" onclick="cambiarCantidad('${item.key}', -1)">-</button>
@@ -1145,9 +1358,23 @@
         `;
       });
 
+      if (recargoLlevarWaffles > 0) {
+        cartList.innerHTML += `
+          <div class="cart-item" style="border-top: 1px dashed var(--border-color); background: rgba(251,133,0,0.05); padding: 6px 10px; border-radius: 6px;">
+            <div>
+              <div class="cart-item-name" style="color: var(--accent-orange); font-size: 0.82rem;">🛍️ Empaque Waffles para Llevar</div>
+              <div class="cart-item-sub">$${RECARGO_EMPAQUE_WAFFLE.toLocaleString('es-CL')} x porción</div>
+            </div>
+            <span style="font-weight: 700; color: var(--accent-orange); font-size: 0.9rem;">+$${recargoLlevarWaffles.toLocaleString('es-CL')}</span>
+          </div>
+        `;
+      }
+
+      const totalFinal = total + recargoLlevarWaffles;
+
       document.getElementById('bar-count').innerText = `${totalItems} ítem${totalItems !== 1 ? 's' : ''}`;
-      document.getElementById('bar-total').innerText = `$${total.toLocaleString('es-CL')}`;
-      document.getElementById('modal-total').innerText = `$${total.toLocaleString('es-CL')}`;
+      document.getElementById('bar-total').innerText = `$${totalFinal.toLocaleString('es-CL')}`;
+      document.getElementById('modal-total').innerText = `$${totalFinal.toLocaleString('es-CL')}`;
     }
 
     function toggleModal(show) {
@@ -1179,12 +1406,18 @@
       const nombre = document.getElementById('cust-name').value.trim() || 'Cliente';
       let direccion = document.getElementById('cust-address').value.trim();
 
+      if (tipoEntrega === 'delivery' && tieneProductosSoloRetiro()) {
+        alert("⚠️ Tienes Waffles en tu pedido, los cuales no están disponibles para delivery. Tu pedido se enviará como Retiro en Local.");
+        setOrderType('retiro');
+      }
+
       if (tipoEntrega === 'delivery' && !direccion) {
         alert("Por favor ingresa tu dirección para el delivery.");
         return;
       }
 
       let total = 0;
+      let recargoLlevarWaffles = 0;
       let texto = `*¡HOLA CHIPPYS! QUIERO HACER UN PEDIDO* 🍔🔥\n\n`;
       texto += `👤 *Cliente:* ${nombre}\n`;
       
@@ -1203,9 +1436,20 @@
         const sub = i.precio * i.qty;
         total += sub;
         texto += `• ${i.qty}x ${i.nombre} - $${sub.toLocaleString('es-CL')}\n`;
+        if (i.detalle) {
+          texto += `   ↳ ${i.detalle}\n`;
+        }
+        if (i.soloRetiro && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
+          recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * i.qty);
+        }
       });
 
-      texto += `\n💰 *TOTAL:* $${total.toLocaleString('es-CL')}`;
+      if (recargoLlevarWaffles > 0) {
+        texto += `• Empaque Waffles para llevar - $${recargoLlevarWaffles.toLocaleString('es-CL')}\n`;
+      }
+
+      const totalFinal = total + recargoLlevarWaffles;
+      texto += `\n💰 *TOTAL:* $${totalFinal.toLocaleString('es-CL')}`;
 
       const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
       window.open(url, '_blank');
@@ -1215,7 +1459,7 @@
     renderMenu();
     actualizarUI();
     comprobarHorario();
-    setInterval(comprobarHorario, 60000); // Revisa automáticamente cada minuto
+    setInterval(comprobarHorario, 60000);
   </script>
 </body>
 </html>
