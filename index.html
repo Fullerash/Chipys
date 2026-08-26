@@ -250,6 +250,43 @@
       font-weight: 600;
     }
 
+    /* Filas con Contadores para Postres */
+    .counter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+    .counter-row.active-row {
+      border-color: var(--accent-yellow);
+      background: rgba(255, 183, 3, 0.06);
+    }
+    .counter-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .counter-btn {
+      background: var(--bg-card-alt);
+      color: var(--text-white);
+      border: 1px solid var(--border-color);
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .counter-qty {
+      font-weight: 700;
+      min-width: 16px;
+      text-align: center;
+      color: var(--accent-yellow);
+    }
+
     /* Checkbox de Combo */
     .combo-box {
       background: rgba(251, 133, 0, 0.1);
@@ -569,8 +606,11 @@
         </div>
 
         <div class="options-container">
-          <span class="options-label">🍦 2. Sabores de Helado (1 o 2 a elección):</span>
-          <div class="options-grid" id="waffle-helado-options"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="options-label">🍦 2. Sabores de Helado:</span>
+            <span style="font-size:0.75rem; color:var(--accent-yellow); font-weight:700;" id="waffle-helado-counter">0 / 2 bolas</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;" id="waffle-helado-options"></div>
         </div>
 
         <div class="options-container">
@@ -579,8 +619,11 @@
         </div>
 
         <div class="options-container">
-          <span class="options-label">✨ 4. Toppings (1 o 2 a elección):</span>
-          <div class="options-grid" id="waffle-toppings-options"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="options-label">✨ 4. Toppings:</span>
+            <span style="font-size:0.75rem; color:var(--accent-yellow); font-weight:700;" id="waffle-toppings-counter">0 / 2 porciones</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;" id="waffle-toppings-options"></div>
         </div>
 
         <div class="options-container">
@@ -609,8 +652,11 @@
 
       <div class="cart-items-list" style="margin-bottom: 10px;">
         <div class="options-container">
-          <span class="options-label">🍦 1. Sabores de Helado (Elige hasta 5 bolas):</span>
-          <div class="options-grid" id="copa-helado-options"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="options-label">🍦 1. Sabores de Helado:</span>
+            <span style="font-size:0.75rem; color:var(--accent-yellow); font-weight:700;" id="copa-helado-counter">0 / 5 bolas</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;" id="copa-helado-options"></div>
         </div>
 
         <div class="options-container">
@@ -624,8 +670,11 @@
         </div>
 
         <div class="options-container">
-          <span class="options-label">✨ 4. Toppings (1 o 2 a elección):</span>
-          <div class="options-grid" id="copa-toppings-options"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="options-label">✨ 4. Toppings:</span>
+            <span style="font-size:0.75rem; color:var(--accent-yellow); font-weight:700;" id="copa-toppings-counter">0 / 2 porciones</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;" id="copa-toppings-options"></div>
         </div>
 
         <div class="options-container">
@@ -761,9 +810,9 @@
 
     let waffleSeleccion = {
       base: null,
-      helados: [],
+      helados: {}, // { "Vainilla": 2 }
       fruta: null,
-      toppings: [],
+      toppings: {}, // { "Oreo molida": 1, "Mini M&M": 1 }
       salsa: null
     };
 
@@ -779,16 +828,15 @@
     };
 
     let copaSeleccion = {
-      helados: [],
+      helados: {}, // { "Chirimoya alegre": 3, "Chocolate": 2 }
       donut: null,
       fruta: null,
-      toppings: [],
+      toppings: {},
       salsa: null
     };
 
     // ==========================================
     // CONFIGURACIÓN DE HORARIOS DE CHIPPYS
-    // 0: Domingo, 1: Lunes, 2: Martes, 3: Miércoles, 4: Jueves, 5: Viernes, 6: Sábado
     // ==========================================
     const HORARIOS_ATENCION = {
       1: { nombre: "Lunes", abierto: false, turnos: [] },
@@ -906,8 +954,8 @@
         categoria: "Pastelería",
         icono: "🧁",
         productos: [
-          { id: 70, nombre: "Waffle", desc: "Base + Helado + Fruta + Toppings + Crema chantilly + Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true },
-          { id: 71, nombre: "Copa Helada", desc: "Bolas de helado + 1 Mini Donut + 1 Fruta + Toppings + Crema chantilly + 1 Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/copa-helada.jpeg", soloRetiro: true, esCopa: true },
+          { id: 70, nombre: "Waffle", desc: "Base + 2 Bolas de helado + Fruta + 2 Toppings + Crema chantilly + Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/waffles.jpeg", soloRetiro: true, esWaffle: true },
+          { id: 71, nombre: "Copa Helada", desc: "5 Bolas de helado + 1 Mini Donut + 1 Fruta + 2 Toppings + Crema chantilly + Salsa. (Solo Retiro en local / Mesa).", precio: 6500, img: "img/copa-helada.jpeg", soloRetiro: true, esCopa: true },
           { id: 72, nombre: "Muffin", desc: "1 por $1.700 o 2 por $3.000.", precio: 1700 },
           { id: 73, nombre: "Galletas", desc: "1 por $1.100 o 3 por $3.000.", precio: 1000 },
           { id: 74, nombre: "Media Luna", desc: "1 por $1.000 o 3 por $2.500.", precio: 1000 }
@@ -1024,7 +1072,7 @@
     }
 
     // ==========================================
-    // PERSONALIZADOR DE WAFFLE
+    // PERSONALIZADOR DE WAFFLE CON CONTADORES
     // ==========================================
     function abrirPersonalizadorWaffle() {
       if (!localAbierto) {
@@ -1033,9 +1081,9 @@
       }
       waffleSeleccion = {
         base: null,
-        helados: [],
+        helados: {},
         fruta: null,
-        toppings: [],
+        toppings: {},
         salsa: null
       };
       renderOpcionesWaffle();
@@ -1048,6 +1096,7 @@
     }
 
     function renderOpcionesWaffle() {
+      // 1. Base
       const baseEl = document.getElementById('waffle-base-options');
       baseEl.innerHTML = WAFFLE_OPCIONES.bases.map(b => `
         <button class="opt-chip ${waffleSeleccion.base === b ? 'selected' : ''}" onclick="selectWaffleSingle('base', '${b}', this)">
@@ -1055,13 +1104,26 @@
         </button>
       `).join('');
 
-      const heladoEl = document.getElementById('waffle-helado-options');
-      heladoEl.innerHTML = WAFFLE_OPCIONES.helados.map(h => `
-        <button class="opt-chip ${waffleSeleccion.helados.includes(h) ? 'selected' : ''}" onclick="selectWaffleMulti('helados', '${h}', 2, this)">
-          ${h}
-        </button>
-      `).join('');
+      // 2. Helados (Máximo 2 bolas en total)
+      const totalHelados = Object.values(waffleSeleccion.helados).reduce((a, b) => a + b, 0);
+      document.getElementById('waffle-helado-counter').innerText = `${totalHelados} / 2 bolas`;
 
+      const heladoEl = document.getElementById('waffle-helado-options');
+      heladoEl.innerHTML = WAFFLE_OPCIONES.helados.map(h => {
+        const cant = waffleSeleccion.helados[h] || 0;
+        return `
+          <div class="counter-row ${cant > 0 ? 'active-row' : ''}">
+            <span>${h}</span>
+            <div class="counter-controls">
+              <button class="counter-btn" onclick="cambiarCantidadWaffle('helados', '${h}', -1, 2)">-</button>
+              <span class="counter-qty">${cant}</span>
+              <button class="counter-btn" onclick="cambiarCantidadWaffle('helados', '${h}', 1, 2)">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 3. Fruta
       const frutaEl = document.getElementById('waffle-fruta-options');
       frutaEl.innerHTML = WAFFLE_OPCIONES.frutas.map(f => `
         <button class="opt-chip ${waffleSeleccion.fruta === f ? 'selected' : ''}" onclick="selectWaffleSingle('fruta', '${f}', this)">
@@ -1069,19 +1131,48 @@
         </button>
       `).join('');
 
-      const topEl = document.getElementById('waffle-toppings-options');
-      topEl.innerHTML = WAFFLE_OPCIONES.toppings.map(t => `
-        <button class="opt-chip ${waffleSeleccion.toppings.includes(t) ? 'selected' : ''}" onclick="selectWaffleMulti('toppings', '${t}', 2, this)">
-          ${t}
-        </button>
-      `).join('');
+      // 4. Toppings (Máximo 2 porciones en total)
+      const totalToppings = Object.values(waffleSeleccion.toppings).reduce((a, b) => a + b, 0);
+      document.getElementById('waffle-toppings-counter').innerText = `${totalToppings} / 2 porciones`;
 
+      const topEl = document.getElementById('waffle-toppings-options');
+      topEl.innerHTML = WAFFLE_OPCIONES.toppings.map(t => {
+        const cant = waffleSeleccion.toppings[t] || 0;
+        return `
+          <div class="counter-row ${cant > 0 ? 'active-row' : ''}">
+            <span>${t}</span>
+            <div class="counter-controls">
+              <button class="counter-btn" onclick="cambiarCantidadWaffle('toppings', '${t}', -1, 2)">-</button>
+              <span class="counter-qty">${cant}</span>
+              <button class="counter-btn" onclick="cambiarCantidadWaffle('toppings', '${t}', 1, 2)">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 5. Salsa
       const salsaEl = document.getElementById('waffle-salsa-options');
       salsaEl.innerHTML = WAFFLE_OPCIONES.salsas.map(s => `
         <button class="opt-chip ${waffleSeleccion.salsa === s ? 'selected' : ''}" onclick="selectWaffleSingle('salsa', '${s}', this)">
           ${s}
         </button>
       `).join('');
+    }
+
+    function cambiarCantidadWaffle(tipo, item, delta, maxTotal) {
+      const actual = waffleSeleccion[tipo][item] || 0;
+      const totalActual = Object.values(waffleSeleccion[tipo]).reduce((a, b) => a + b, 0);
+
+      if (delta > 0 && totalActual >= maxTotal) return;
+      if (delta < 0 && actual <= 0) return;
+
+      const nuevoValor = actual + delta;
+      if (nuevoValor > 0) {
+        waffleSeleccion[tipo][item] = nuevoValor;
+      } else {
+        delete waffleSeleccion[tipo][item];
+      }
+      renderOpcionesWaffle();
     }
 
     function selectWaffleSingle(category, val, btnEl) {
@@ -1091,35 +1182,24 @@
       btnEl.classList.add('selected');
     }
 
-    function selectWaffleMulti(category, val, max, btnEl) {
-      let list = waffleSeleccion[category];
-      if (list.includes(val)) {
-        list = list.filter(item => item !== val);
-      } else {
-        if (list.length >= max) {
-          list.shift();
-        }
-        list.push(val);
-      }
-      waffleSeleccion[category] = list;
-      renderOpcionesWaffle();
-    }
-
     function confirmarWaffle() {
+      const totalHelados = Object.values(waffleSeleccion.helados).reduce((a, b) => a + b, 0);
+      const totalToppings = Object.values(waffleSeleccion.toppings).reduce((a, b) => a + b, 0);
+
       if (!waffleSeleccion.base) {
         alert("Por favor selecciona 1 base para tu Waffle.");
         return;
       }
-      if (waffleSeleccion.helados.length === 0) {
-        alert("Por favor selecciona al menos 1 sabor de helado.");
+      if (totalHelados === 0) {
+        alert("Por favor selecciona los sabores de helado (hasta 2 bolas).");
         return;
       }
       if (!waffleSeleccion.fruta) {
         alert("Por favor selecciona 1 fruta.");
         return;
       }
-      if (waffleSeleccion.toppings.length === 0) {
-        alert("Por favor selecciona al menos 1 topping.");
+      if (totalToppings === 0) {
+        alert("Por favor selecciona los toppings (hasta 2 porciones).");
         return;
       }
       if (!waffleSeleccion.salsa) {
@@ -1127,15 +1207,10 @@
         return;
       }
 
-      const heladoTexto = waffleSeleccion.helados.length === 1 
-        ? `${waffleSeleccion.helados[0]} (Doble ración)` 
-        : waffleSeleccion.helados.join(', ');
+      const heladosLista = Object.entries(waffleSeleccion.helados).map(([sabor, cant]) => `${cant > 1 ? cant + 'x ' : ''}${sabor}`).join(', ');
+      const toppingsLista = Object.entries(waffleSeleccion.toppings).map(([top, cant]) => `${cant > 1 ? cant + 'x ' : ''}${top}`).join(', ');
 
-      const toppingsTexto = waffleSeleccion.toppings.length === 1 
-        ? `${waffleSeleccion.toppings[0]} (Doble ración)` 
-        : waffleSeleccion.toppings.join(', ');
-
-      const detalleWaffle = `Base: ${waffleSeleccion.base} | Helados: ${heladoTexto} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${toppingsTexto} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
+      const detalleWaffle = `Base: ${waffleSeleccion.base} | Helados (${totalHelados} bolas): ${heladosLista} | Fruta: ${waffleSeleccion.fruta} | Toppings: ${toppingsLista} | Salsa: ${waffleSeleccion.salsa} | Crema Chantilly`;
       const key = `waffle_${Date.now()}`;
 
       carrito.push({
@@ -1158,7 +1233,7 @@
     }
 
     // ==========================================
-    // PERSONALIZADOR DE COPA HELADA
+    // PERSONALIZADOR DE COPA HELADA CON CONTADORES
     // ==========================================
     function abrirPersonalizadorCopa() {
       if (!localAbierto) {
@@ -1166,10 +1241,10 @@
         return;
       }
       copaSeleccion = {
-        helados: [],
+        helados: {},
         donut: null,
         fruta: null,
-        toppings: [],
+        toppings: {},
         salsa: null
       };
       renderOpcionesCopa();
@@ -1182,13 +1257,26 @@
     }
 
     function renderOpcionesCopa() {
-      const heladoEl = document.getElementById('copa-helado-options');
-      heladoEl.innerHTML = COPA_OPCIONES.helados.map(h => `
-        <button class="opt-chip ${copaSeleccion.helados.includes(h) ? 'selected' : ''}" onclick="selectCopaMulti('helados', '${h}', 5, this)">
-          ${h}
-        </button>
-      `).join('');
+      // 1. Helados (Máximo 5 bolas repartidas como quiera)
+      const totalHelados = Object.values(copaSeleccion.helados).reduce((a, b) => a + b, 0);
+      document.getElementById('copa-helado-counter').innerText = `${totalHelados} / 5 bolas`;
 
+      const heladoEl = document.getElementById('copa-helado-options');
+      heladoEl.innerHTML = COPA_OPCIONES.helados.map(h => {
+        const cant = copaSeleccion.helados[h] || 0;
+        return `
+          <div class="counter-row ${cant > 0 ? 'active-row' : ''}">
+            <span>${h}</span>
+            <div class="counter-controls">
+              <button class="counter-btn" onclick="cambiarCantidadCopa('helados', '${h}', -1, 5)">-</button>
+              <span class="counter-qty">${cant}</span>
+              <button class="counter-btn" onclick="cambiarCantidadCopa('helados', '${h}', 1, 5)">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 2. Mini Donut
       const donutEl = document.getElementById('copa-donut-options');
       donutEl.innerHTML = COPA_OPCIONES.donuts.map(d => `
         <button class="opt-chip ${copaSeleccion.donut === d ? 'selected' : ''}" onclick="selectCopaSingle('donut', '${d}', this)">
@@ -1196,6 +1284,7 @@
         </button>
       `).join('');
 
+      // 3. Fruta
       const frutaEl = document.getElementById('copa-fruta-options');
       frutaEl.innerHTML = COPA_OPCIONES.frutas.map(f => `
         <button class="opt-chip ${copaSeleccion.fruta === f ? 'selected' : ''}" onclick="selectCopaSingle('fruta', '${f}', this)">
@@ -1203,19 +1292,48 @@
         </button>
       `).join('');
 
-      const topEl = document.getElementById('copa-toppings-options');
-      topEl.innerHTML = COPA_OPCIONES.toppings.map(t => `
-        <button class="opt-chip ${copaSeleccion.toppings.includes(t) ? 'selected' : ''}" onclick="selectCopaMulti('toppings', '${t}', 2, this)">
-          ${t}
-        </button>
-      `).join('');
+      // 4. Toppings (Máximo 2 porciones)
+      const totalToppings = Object.values(copaSeleccion.toppings).reduce((a, b) => a + b, 0);
+      document.getElementById('copa-toppings-counter').innerText = `${totalToppings} / 2 porciones`;
 
+      const topEl = document.getElementById('copa-toppings-options');
+      topEl.innerHTML = COPA_OPCIONES.toppings.map(t => {
+        const cant = copaSeleccion.toppings[t] || 0;
+        return `
+          <div class="counter-row ${cant > 0 ? 'active-row' : ''}">
+            <span>${t}</span>
+            <div class="counter-controls">
+              <button class="counter-btn" onclick="cambiarCantidadCopa('toppings', '${t}', -1, 2)">-</button>
+              <span class="counter-qty">${cant}</span>
+              <button class="counter-btn" onclick="cambiarCantidadCopa('toppings', '${t}', 1, 2)">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 5. Salsa
       const salsaEl = document.getElementById('copa-salsa-options');
       salsaEl.innerHTML = COPA_OPCIONES.salsas.map(s => `
         <button class="opt-chip ${copaSeleccion.salsa === s ? 'selected' : ''}" onclick="selectCopaSingle('salsa', '${s}', this)">
           ${s}
         </button>
       `).join('');
+    }
+
+    function cambiarCantidadCopa(tipo, item, delta, maxTotal) {
+      const actual = copaSeleccion[tipo][item] || 0;
+      const totalActual = Object.values(copaSeleccion[tipo]).reduce((a, b) => a + b, 0);
+
+      if (delta > 0 && totalActual >= maxTotal) return;
+      if (delta < 0 && actual <= 0) return;
+
+      const nuevoValor = actual + delta;
+      if (nuevoValor > 0) {
+        copaSeleccion[tipo][item] = nuevoValor;
+      } else {
+        delete copaSeleccion[tipo][item];
+      }
+      renderOpcionesCopa();
     }
 
     function selectCopaSingle(category, val, btnEl) {
@@ -1225,23 +1343,12 @@
       btnEl.classList.add('selected');
     }
 
-    function selectCopaMulti(category, val, max, btnEl) {
-      let list = copaSeleccion[category];
-      if (list.includes(val)) {
-        list = list.filter(item => item !== val);
-      } else {
-        if (list.length >= max) {
-          list.shift();
-        }
-        list.push(val);
-      }
-      copaSeleccion[category] = list;
-      renderOpcionesCopa();
-    }
-
     function confirmarCopa() {
-      if (copaSeleccion.helados.length === 0) {
-        alert("Por favor selecciona al menos 1 sabor de helado (máximo 5).");
+      const totalHelados = Object.values(copaSeleccion.helados).reduce((a, b) => a + b, 0);
+      const totalToppings = Object.values(copaSeleccion.toppings).reduce((a, b) => a + b, 0);
+
+      if (totalHelados === 0) {
+        alert("Por favor selecciona tus sabores de helado (hasta 5 bolas).");
         return;
       }
       if (!copaSeleccion.donut) {
@@ -1252,8 +1359,8 @@
         alert("Por favor selecciona 1 fruta.");
         return;
       }
-      if (copaSeleccion.toppings.length === 0) {
-        alert("Por favor selecciona al menos 1 topping.");
+      if (totalToppings === 0) {
+        alert("Por favor selecciona tus toppings (hasta 2 porciones).");
         return;
       }
       if (!copaSeleccion.salsa) {
@@ -1261,18 +1368,10 @@
         return;
       }
 
-      let heladosTexto = '';
-      if (copaSeleccion.helados.length === 1) {
-        heladosTexto = `${copaSeleccion.helados[0]} (5 bolas del mismo sabor)`;
-      } else {
-        heladosTexto = `${copaSeleccion.helados.join(', ')} (${copaSeleccion.helados.length} sabores)`;
-      }
+      const heladosLista = Object.entries(copaSeleccion.helados).map(([sabor, cant]) => `${cant > 1 ? cant + 'x ' : ''}${sabor}`).join(', ');
+      const toppingsLista = Object.entries(copaSeleccion.toppings).map(([top, cant]) => `${cant > 1 ? cant + 'x ' : ''}${top}`).join(', ');
 
-      const toppingsTexto = copaSeleccion.toppings.length === 1 
-        ? `${copaSeleccion.toppings[0]} (Doble ración)` 
-        : copaSeleccion.toppings.join(', ');
-
-      const detalleCopa = `Helados: ${heladosTexto} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${toppingsTexto} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
+      const detalleCopa = `Helados (${totalHelados} bolas): ${heladosLista} | Mini Donut: ${copaSeleccion.donut} | Fruta: ${copaSeleccion.fruta} | Toppings: ${toppingsLista} | Salsa: ${copaSeleccion.salsa} | Crema Chantilly`;
       const key = `copa_${Date.now()}`;
 
       carrito.push({
