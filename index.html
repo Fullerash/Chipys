@@ -318,6 +318,22 @@
       color: var(--text-muted);
     }
 
+    /* Selector de Bebida del Combo */
+    .combo-drink-select {
+      display: none;
+      margin-top: -6px;
+      margin-bottom: 12px;
+      padding: 10px;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--accent-orange);
+      border-radius: 8px;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Botón Agregar */
     .btn-add {
       width: 100%;
@@ -796,6 +812,7 @@
     const TELEFONO_WHATSAPP = "56941971256"; 
     const PRECIO_COMBO = 2700;
     const RECARGO_EMPAQUE_WAFFLE = 200;
+    const OPCIONES_BEBIDA_COMBO = ["Coca Zero", "Coca Normal", "Fanta", "Sprite"];
 
     // ==========================================
     // OPCIONES PERSONALIZABLES DE WAFFLE
@@ -845,7 +862,7 @@
       4: { nombre: "Jueves", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
       5: { nombre: "Viernes", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
       6: { nombre: "Sábado", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
-      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] }
+      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "12:00", hasta: "20:00" }] }
     };
 
     let localAbierto = false;
@@ -966,6 +983,7 @@
     let carrito = [];
     const seleccionOpciones = {};
     const seleccionCombos = {};
+    const seleccionBebidaCombo = {};
 
     // ==========================================
     // SISTEMA DE CONTROL DE HORARIOS
@@ -1480,6 +1498,9 @@
 
           let comboHtml = '';
           if (cat.permiteCombo) {
+            if (!seleccionBebidaCombo[p.id]) {
+              seleccionBebidaCombo[p.id] = OPCIONES_BEBIDA_COMBO[0];
+            }
             comboHtml = `
               <label class="combo-box" for="combo-${p.id}">
                 <div class="combo-text">
@@ -1488,6 +1509,17 @@
                 </div>
                 <input type="checkbox" id="combo-${p.id}" onchange="toggleCombo(${p.id})">
               </label>
+
+              <div class="combo-drink-select" id="combo-drink-${p.id}">
+                <span class="options-label" style="margin-bottom:6px; display:block;">🥤 Elige la bebida de tu combo:</span>
+                <div class="options-grid">
+                  ${OPCIONES_BEBIDA_COMBO.map((beb, i) => `
+                    <button class="opt-chip ${i === 0 ? 'selected' : ''}" onclick="setDrinkCombo(${p.id}, '${beb}', this)">
+                      ${beb}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
             `;
           }
 
@@ -1544,7 +1576,19 @@
     function toggleCombo(prodId) {
       const checkbox = document.getElementById(`combo-${prodId}`);
       seleccionCombos[prodId] = checkbox.checked;
+      
+      const drinkSelector = document.getElementById(`combo-drink-${prodId}`);
+      if (drinkSelector) {
+        drinkSelector.style.display = checkbox.checked ? 'block' : 'none';
+      }
       actualizarPrecioCard(prodId);
+    }
+
+    function setDrinkCombo(prodId, bebida, btnEl) {
+      seleccionBebidaCombo[prodId] = bebida;
+      const chips = btnEl.parentElement.querySelectorAll('.opt-chip');
+      chips.forEach(c => c.classList.remove('selected'));
+      btnEl.classList.add('selected');
     }
 
     function actualizarPrecioCard(prodId) {
@@ -1575,10 +1619,12 @@
 
       const opt = seleccionOpciones[prodId];
       const tieneCombo = seleccionCombos[prodId] || false;
+      const bebidaCombo = seleccionBebidaCombo[prodId] || OPCIONES_BEBIDA_COMBO[0];
 
       let key = `${prodId}`;
       let tituloItem = prodObj.nombre;
       let precioFinal = prodObj.precio || opt.precio;
+      let detalleItem = null;
 
       if (prodObj.variantes || prodObj.carnes) {
         key += `_${opt.tipo}`;
@@ -1587,8 +1633,9 @@
       }
 
       if (tieneCombo) {
-        key += `_combo`;
-        tituloItem += ` + Combo (Papas y Bebida en lata)`;
+        key += `_combo_${bebidaCombo.replace(/\s+/g, '')}`;
+        tituloItem += ` + Combo`;
+        detalleItem = `   🍟 Papas Fritas\n   🥤 Bebida: 1x ${bebidaCombo}`;
         precioFinal += PRECIO_COMBO;
       }
 
@@ -1600,6 +1647,7 @@
           key: key,
           id: prodId,
           nombre: tituloItem,
+          detalle: detalleItem,
           precio: precioFinal,
           qty: 1,
           soloRetiro: prodObj.soloRetiro || false
@@ -1615,6 +1663,8 @@
       if (comboCheck) {
         comboCheck.checked = false;
         seleccionCombos[prodId] = false;
+        const drinkSelector = document.getElementById(`combo-drink-${prodId}`);
+        if (drinkSelector) drinkSelector.style.display = 'none';
         actualizarPrecioCard(prodId);
       }
 
@@ -1685,7 +1735,7 @@
         total += itemSub;
         totalItems += item.qty;
 
-        if (item.nombre === "Waffle" && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
+        if (item.nombre.startsWith("Waffle") && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
           recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * item.qty);
         }
 
@@ -1791,7 +1841,7 @@
         if (i.detalle) {
           texto += `${i.detalle}\n`;
         }
-        if (i.nombre === "Waffle" && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
+        if (i.nombre.startsWith("Waffle") && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
           recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * i.qty);
         }
       });
