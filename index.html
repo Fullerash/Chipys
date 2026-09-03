@@ -1670,7 +1670,7 @@
       if (tieneAgrandar) {
         key += `_extraCarne`;
         precioFinal += PRECIO_AGRANDAR_SMASH;
-        detalleLineas.push(`   🥩 Agrandada (+1 Carne extra Smash)`);
+        detalleLineas.push(`   🥩 Agrandada (Doble smash y doble queso)`);
       }
 
       if (tieneCombo) {
@@ -1885,13 +1885,17 @@
       texto += `📝 *DETALLE DEL PEDIDO:* \n`;
 
       carrito.forEach(i => {
-        const sub = i.precio * i.qty;
-        texto += `• ${i.qty}x ${i.nombre} - $${sub.toLocaleString('es-CL')}\n`;
+        const itemPrecio = Number(i.precio) || 0;
+        const itemQty = Number(i.qty) || 1;
+        const sub = itemPrecio * itemQty;
+        total += sub;
+
+        texto += `• ${itemQty}x ${i.nombre} - $${sub.toLocaleString('es-CL')}\n`;
         if (i.detalle) {
           texto += `${i.detalle}\n`;
         }
         if (i.nombre.startsWith("Waffle") && tipoEntrega === 'retiro' && tipoServicio === 'Para Llevar') {
-          recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * i.qty);
+          recargoLlevarWaffles += (RECARGO_EMPAQUE_WAFFLE * itemQty);
         }
       });
 
