@@ -287,7 +287,7 @@
       color: var(--accent-yellow);
     }
 
-    /* Checkbox de Combo */
+    /* Checkbox de Combo y Agrandar */
     .combo-box {
       background: rgba(251, 133, 0, 0.1);
       border: 1px dashed var(--accent-orange);
@@ -316,6 +316,23 @@
     .combo-sub {
       font-size: 0.72rem;
       color: var(--text-muted);
+    }
+
+    .extra-meat-box {
+      background: rgba(255, 183, 3, 0.08);
+      border: 1px dashed var(--accent-yellow);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .extra-meat-box input {
+      accent-color: var(--accent-yellow);
+      transform: scale(1.2);
+      cursor: pointer;
     }
 
     /* Selector de Bebida del Combo */
@@ -811,8 +828,9 @@
     // ==========================================
     const TELEFONO_WHATSAPP = "56941971256"; 
     const PRECIO_COMBO = 2700;
+    const PRECIO_AGRANDAR_SMASH = 2500; // 1 carne extra smash
     const RECARGO_EMPAQUE_WAFFLE = 200;
-    const OPCIONES_BEBIDA_COMBO = ["Coca-Cola Zero", "Coca-Cola Normal", "Fanta", "Sprite"];
+    const OPCIONES_BEBIDA_COMBO = ["Coca Zero", "Coca Normal", "Fanta", "Sprite"];
 
     // ==========================================
     // OPCIONES PERSONALIZABLES DE WAFFLE
@@ -862,7 +880,7 @@
       4: { nombre: "Jueves", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
       5: { nombre: "Viernes", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
       6: { nombre: "Sábado", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
-      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "12:00", hasta: "20:00" }] }
+      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] }
     };
 
     let localAbierto = false;
@@ -879,6 +897,7 @@
         categoria: "Smash Burgers",
         icono: "🍔",
         permiteCombo: true,
+        permiteAgrandar: true,
         productos: [
           { id: 1, nombre: "Smash Clasic Burger", desc: "Pan de papa tostado, carne smash, Queso gauda, lechuga fresca, tomate y mayonesa.", precio: 6590, img: "img/clasic.jpeg" },
           { id: 2, nombre: "Smash Hot Chippys", desc: "Pan de papa tostado, carne smash, queso cheddar,jalapeños, cebolla en cubos, y nuestra irresistible mermeladade tocino.", precio: 7590, img: "img/hot-chippys.jpeg" },
@@ -935,12 +954,12 @@
         categoria: "Papas Fritas",
         icono: "🍟",
         productos: [
-          { id: 40, nombre: "Papas Solas", desc: "Papas fritas crujientes.", variantes: [{ tipo: "Simple", precio: 2990 }, { tipo: "Mediana", precio: 3990 }, { tipo: "L", precio: 5690 }] },
-          { id: 41, nombre: "Papas Supremas", desc: "Queso cheddar, churrasco, tomate y cebollín.", variantes: [{ tipo: "Mediana", precio: 6490 }, { tipo: "L", precio: 8490 }] },
+          { id: 40, nombre: "Papas Solas", desc: "Papas fritas crujientes.", variantes: [{ tipo: "Simple", precio: 2990 }, { tipo: "Mediana", precio: 3990 }, { tipo: "L", precio: 4990 }] },
+          { id: 41, nombre: "Papas Supremas", desc: "Queso cheddar, churrasco, tomate y cebollín.", variantes: [{ tipo: "Mediana", precio: 6400 }, { tipo: "L", precio: 7400 }] },
           { id: 42, nombre: "Papas Chippys", desc: "Queso cheddar y tocino crujiente.", variantes: [{ tipo: "Mediana", precio: 6400 }, { tipo: "L", precio: 7990 }] },
-          { id: 43, nombre: "Chorrillana", desc: "Cebolla caramelizada, carne y huevo frito.", variantes: [{ tipo: "Mediana", precio: 5990 }, { tipo: "L", precio: 7490 }] },
-          { id: 44, nombre: "Salchipapas", desc: "Papas fritas con vienesa en rodajas.", variantes: [{ tipo: "Mediana", precio: 4990 }, { tipo: "L", precio: 6390 }] },
-          { id: 45, nombre: "Papas Funghi", desc: "Queso derretido, champiñones salteados y ciboulette.", variantes: [{ tipo: "Mediana", precio: 7490 }, { tipo: "L", precio: 9990 }] }
+          { id: 43, nombre: "Chorrillana Chippys", desc: "Cebolla caramelizada, carne y huevo frito.", variantes: [{ tipo: "Mediana", precio: 5990 }, { tipo: "L", precio: 7490 }] },
+          { id: 44, nombre: "Salchipapas", desc: "Papas fritas con vienesa en rodajas.", variantes: [{ tipo: "Mediana", precio: 4990 }, { tipo: "L", precio: 5990 }] },
+          { id: 45, nombre: "Papas Funghi", desc: "Queso derretido, champiñones salteados y ciboulette.", variantes: [{ tipo: "Mediana", precio: 6400 }, { tipo: "L", precio: 7990 }] }
         ]
       },
       {
@@ -948,9 +967,9 @@
         categoria: "Para Compartir & Promos",
         icono: "🍗",
         productos: [
-          { id: 50, nombre: "Chippy-Promo", desc: "Porción para compartir: 6 Nuggets + 6 Empanadas + 6 Aros de cebolla + 1 Porción de Papas fritas.", precio: 8590 },
+          { id: 50, nombre: "Chippy-Promo", desc: "Porción para compartir: 6 Nuggets + 6 Empanadas + 6 Aros de cebolla + 1 Porción de Papas fritas.", precio: 6990 },
           { id: 51, nombre: "Porción de Nuggets", desc: "6 unidades crujientes.", precio: 2690 },
-          { id: 52, nombre: "Porción Empanadas de Queso", desc: "6 unidades.", precio: 3290 },
+          { id: 52, nombre: "Porción Empanadas de Queso", desc: "6 unidades.", precio: 2690 },
           { id: 53, nombre: "Aros de Cebolla", desc: "6 unidades.", precio: 2590 }
         ]
       },
@@ -983,6 +1002,7 @@
     let carrito = [];
     const seleccionOpciones = {};
     const seleccionCombos = {};
+    const seleccionAgrandarSmash = {};
     const seleccionBebidaCombo = {};
 
     // ==========================================
@@ -1114,7 +1134,6 @@
     }
 
     function renderOpcionesWaffle() {
-      // 1. Base
       const baseEl = document.getElementById('waffle-base-options');
       baseEl.innerHTML = WAFFLE_OPCIONES.bases.map(b => `
         <button class="opt-chip ${waffleSeleccion.base === b ? 'selected' : ''}" onclick="selectWaffleSingle('base', '${b}', this)">
@@ -1122,7 +1141,6 @@
         </button>
       `).join('');
 
-      // 2. Helados (Máximo 2 bolas)
       const totalHelados = Object.values(waffleSeleccion.helados).reduce((a, b) => a + b, 0);
       document.getElementById('waffle-helado-counter').innerText = `${totalHelados} / 2 bolas`;
 
@@ -1141,7 +1159,6 @@
         `;
       }).join('');
 
-      // 3. Fruta
       const frutaEl = document.getElementById('waffle-fruta-options');
       frutaEl.innerHTML = WAFFLE_OPCIONES.frutas.map(f => `
         <button class="opt-chip ${waffleSeleccion.fruta === f ? 'selected' : ''}" onclick="selectWaffleSingle('fruta', '${f}', this)">
@@ -1149,7 +1166,6 @@
         </button>
       `).join('');
 
-      // 4. Toppings (Máximo 2 porciones)
       const totalToppings = Object.values(waffleSeleccion.toppings).reduce((a, b) => a + b, 0);
       document.getElementById('waffle-toppings-counter').innerText = `${totalToppings} / 2 porciones`;
 
@@ -1168,7 +1184,6 @@
         `;
       }).join('');
 
-      // 5. Salsa
       const salsaEl = document.getElementById('waffle-salsa-options');
       salsaEl.innerHTML = WAFFLE_OPCIONES.salsas.map(s => `
         <button class="opt-chip ${waffleSeleccion.salsa === s ? 'selected' : ''}" onclick="selectWaffleSingle('salsa', '${s}', this)">
@@ -1288,7 +1303,6 @@
     }
 
     function renderOpcionesCopa() {
-      // 1. Helados (Hasta 5 bolas)
       const totalHelados = Object.values(copaSeleccion.helados).reduce((a, b) => a + b, 0);
       document.getElementById('copa-helado-counter').innerText = `${totalHelados} / 5 bolas`;
 
@@ -1307,7 +1321,6 @@
         `;
       }).join('');
 
-      // 2. Mini Donut
       const donutEl = document.getElementById('copa-donut-options');
       donutEl.innerHTML = COPA_OPCIONES.donuts.map(d => `
         <button class="opt-chip ${copaSeleccion.donut === d ? 'selected' : ''}" onclick="selectCopaSingle('donut', '${d}', this)">
@@ -1315,7 +1328,6 @@
         </button>
       `).join('');
 
-      // 3. Fruta
       const frutaEl = document.getElementById('copa-fruta-options');
       frutaEl.innerHTML = COPA_OPCIONES.frutas.map(f => `
         <button class="opt-chip ${copaSeleccion.fruta === f ? 'selected' : ''}" onclick="selectCopaSingle('fruta', '${f}', this)">
@@ -1323,7 +1335,6 @@
         </button>
       `).join('');
 
-      // 4. Toppings (Hasta 2 porciones)
       const totalToppings = Object.values(copaSeleccion.toppings).reduce((a, b) => a + b, 0);
       document.getElementById('copa-toppings-counter').innerText = `${totalToppings} / 2 porciones`;
 
@@ -1342,7 +1353,6 @@
         `;
       }).join('');
 
-      // 5. Salsa
       const salsaEl = document.getElementById('copa-salsa-options');
       salsaEl.innerHTML = COPA_OPCIONES.salsas.map(s => `
         <button class="opt-chip ${copaSeleccion.salsa === s ? 'selected' : ''}" onclick="selectCopaSingle('salsa', '${s}', this)">
@@ -1496,6 +1506,20 @@
             }
           }
 
+          // Opción de Agrandar Smash (+ $2.500 por 1 carne extra)
+          let agrandarHtml = '';
+          if (cat.permiteAgrandar) {
+            agrandarHtml = `
+              <label class="extra-meat-box" for="agrandar-${p.id}">
+                <div class="combo-text">
+                  <span class="combo-title" style="color:var(--accent-yellow);">🥩 Agrandar Smash (+ $2.500)</span>
+                  <span class="combo-sub">Suma 1 carne Smash extra</span>
+                </div>
+                <input type="checkbox" id="agrandar-${p.id}" onchange="toggleAgrandarSmash(${p.id})">
+              </label>
+            `;
+          }
+
           let comboHtml = '';
           if (cat.permiteCombo) {
             if (!seleccionBebidaCombo[p.id]) {
@@ -1553,6 +1577,7 @@
                 </div>
                 <div class="card-desc">${p.desc}</div>
                 ${opcionesHtml}
+                ${agrandarHtml}
                 ${comboHtml}
                 <button class="btn-add" ${btnAction}>${btnTexto}</button>
               </div>
@@ -1584,6 +1609,12 @@
       actualizarPrecioCard(prodId);
     }
 
+    function toggleAgrandarSmash(prodId) {
+      const checkbox = document.getElementById(`agrandar-${prodId}`);
+      seleccionAgrandarSmash[prodId] = checkbox.checked;
+      actualizarPrecioCard(prodId);
+    }
+
     function setDrinkCombo(prodId, bebida, btnEl) {
       seleccionBebidaCombo[prodId] = bebida;
       const chips = btnEl.parentElement.querySelectorAll('.opt-chip');
@@ -1596,6 +1627,9 @@
       let totalCard = opt ? opt.precio : 0;
       if (seleccionCombos[prodId]) {
         totalCard += PRECIO_COMBO;
+      }
+      if (seleccionAgrandarSmash[prodId]) {
+        totalCard += PRECIO_AGRANDAR_SMASH;
       }
       document.getElementById(`price-tag-${prodId}`).innerText = `$${totalCard.toLocaleString('es-CL')}`;
     }
@@ -1619,12 +1653,13 @@
 
       const opt = seleccionOpciones[prodId];
       const tieneCombo = seleccionCombos[prodId] || false;
+      const tieneAgrandar = seleccionAgrandarSmash[prodId] || false;
       const bebidaCombo = seleccionBebidaCombo[prodId] || OPCIONES_BEBIDA_COMBO[0];
 
       let key = `${prodId}`;
       let tituloItem = prodObj.nombre;
       let precioFinal = prodObj.precio || opt.precio;
-      let detalleItem = null;
+      let detalleLineas = [];
 
       if (prodObj.variantes || prodObj.carnes) {
         key += `_${opt.tipo}`;
@@ -1632,12 +1667,21 @@
         precioFinal = opt.precio;
       }
 
+      if (tieneAgrandar) {
+        key += `_extraCarne`;
+        precioFinal += PRECIO_AGRANDAR_SMASH;
+        detalleLineas.push(`   🥩 Agrandada (+1 Carne extra Smash)`);
+      }
+
       if (tieneCombo) {
         key += `_combo_${bebidaCombo.replace(/\s+/g, '')}`;
         tituloItem += ` + Combo`;
-        detalleItem = `   🍟 Papas Fritas\n   🥤 Bebida: 1x ${bebidaCombo}`;
+        detalleLineas.push(`   🍟 Papas Fritas`);
+        detalleLineas.push(`   🥤 Bebida: 1x ${bebidaCombo}`);
         precioFinal += PRECIO_COMBO;
       }
+
+      const detalleItem = detalleLineas.length > 0 ? detalleLineas.join('\n') : null;
 
       const index = carrito.findIndex(item => item.key === key);
       if (index > -1) {
@@ -1665,9 +1709,15 @@
         seleccionCombos[prodId] = false;
         const drinkSelector = document.getElementById(`combo-drink-${prodId}`);
         if (drinkSelector) drinkSelector.style.display = 'none';
-        actualizarPrecioCard(prodId);
       }
 
+      const agrandarCheck = document.getElementById(`agrandar-${prodId}`);
+      if (agrandarCheck) {
+        agrandarCheck.checked = false;
+        seleccionAgrandarSmash[prodId] = false;
+      }
+
+      actualizarPrecioCard(prodId);
       actualizarUI();
     }
 
@@ -1836,7 +1886,6 @@
 
       carrito.forEach(i => {
         const sub = i.precio * i.qty;
-        total += sub;
         texto += `• ${i.qty}x ${i.nombre} - $${sub.toLocaleString('es-CL')}\n`;
         if (i.detalle) {
           texto += `${i.detalle}\n`;
