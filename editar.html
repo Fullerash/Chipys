@@ -2,152 +2,301 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Chippys Admin - Gestión de Menú</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #121316;
-      --card: #1c1d22;
-      --card-alt: #25262c;
-      --accent: #ffb703;
-      --orange: #fb8500;
+      --bg: #0f1013;
+      --panel: #17181d;
+      --card: #1f2026;
+      --card-inner: #272931;
+      --accent-yellow: #ffb703;
+      --accent-orange: #fb8500;
       --text: #f8f9fa;
-      --muted: #a0a4b0;
-      --border: #2e3039;
+      --muted: #9499a8;
+      --dim: #5c6170;
+      --border: #2d3039;
       --red: #e63946;
       --green: #25d366;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 80px; }
-    
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+
+    /* Modal de Login */
+    .login-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 16, 19, 0.98);
+      backdrop-filter: blur(16px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent-yellow);
+      border-radius: 16px;
+      padding: 30px 24px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+    .login-title { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 900; color: var(--accent-yellow); margin-bottom: 6px; }
+    .login-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; }
+    .pin-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 1.3rem;
+      text-align: center;
+      letter-spacing: 5px;
+      margin-bottom: 14px;
+    }
+    .pin-input:focus { outline: none; border-color: var(--accent-yellow); }
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-orange) 100%);
+      color: #000;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-login:active { opacity: 0.9; }
+
+    /* Topbar fija */
     header {
-      background: var(--card);
+      background: rgba(23, 24, 29, 0.95);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 18px 25px;
+      padding: 16px 22px;
       position: sticky;
       top: 0;
       z-index: 100;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-    .brand { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 900; color: var(--accent); }
-    .btn-save-cloud {
-      background: linear-gradient(135deg, var(--green) 0%, #1eb956 100%);
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-title { font-family: 'Montserrat', sans-serif; font-size: 1.35rem; font-weight: 900; color: var(--accent-yellow); letter-spacing: 1px; }
+    .status-pill { background: rgba(37, 211, 102, 0.12); color: var(--green); border: 1px solid rgba(37, 211, 102, 0.25); font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--green) 0%, #1eaa4e 100%);
       color: #fff;
       border: none;
-      padding: 10px 22px;
+      padding: 10px 20px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-      transition: transform 0.15s;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+      transition: opacity 0.15s, transform 0.15s;
     }
-    .btn-save-cloud:active { transform: scale(0.98); }
+    .btn-save:hover { opacity: 0.95; }
+    .btn-save:active { transform: scale(0.98); }
 
-    .container { max-width: 850px; margin: 25px auto; padding: 0 15px; }
+    /* Barra de control: Buscador y Filtros */
+    .controls-bar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+    .search-input:focus { outline: none; border-color: var(--accent-yellow); }
 
-    .cat-card {
+    .cat-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
       background: var(--card);
       border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent-yellow);
+      color: #000;
+      border-color: var(--accent-yellow);
+    }
+
+    /* Contenedor principal */
+    .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+
+    /* Categoría */
+    .cat-block {
+      background: var(--panel);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       overflow: hidden;
     }
-    .cat-title {
-      background: rgba(255, 183, 3, 0.08);
-      padding: 14px 20px;
-      font-family: 'Montserrat';
-      font-weight: 800;
-      color: var(--accent);
+    .cat-header {
+      background: rgba(255, 183, 3, 0.05);
       border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    .cat-label {
+      font-family: 'Montserrat';
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--accent-yellow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cat-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
 
-    .prod-row {
-      padding: 18px 20px;
+    /* Tarjetas de Producto */
+    .prod-card {
+      padding: 16px 18px;
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-    .prod-row:last-child { border-bottom: none; }
-    
-    .grid-main {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 600px) { .grid-main { grid-template-columns: 1fr; } }
+    .prod-card:last-child { border-bottom: none; }
 
-    .input-field {
+    .grid-row-1 {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .price-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+    }
+    .price-input-wrap span { color: var(--accent-yellow); font-weight: 700; font-size: 0.9rem; }
+    .price-input-wrap input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      width: 80px;
+    }
+    .price-input-wrap input:focus { outline: none; }
+
+    .input-clean {
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 9px 12px;
+      padding: 8px 12px;
       border-radius: 6px;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       width: 100%;
     }
-    .input-field:focus { border-color: var(--accent); outline: none; }
+    .input-clean:focus { outline: none; border-color: var(--accent-yellow); }
 
-    .variants-box {
-      background: var(--card-alt);
+    /* Variantes / Tamaños */
+    .variant-box {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 12px;
-      margin-top: 5px;
+      padding: 10px;
     }
     .variant-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 100px 32px;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       align-items: center;
     }
 
-    .btn-action {
-      background: var(--card-alt);
-      color: var(--muted);
+    .btn-sub {
+      background: var(--card);
       border: 1px solid var(--border);
-      padding: 6px 12px;
+      color: var(--muted);
+      padding: 6px 10px;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-action:hover { color: #fff; border-color: var(--muted); }
-    .btn-del { color: var(--red); border-color: rgba(230,57,70,0.3); background: rgba(230,57,70,0.1); }
-    .btn-add-item {
+    .btn-sub:hover { color: #fff; border-color: var(--muted); }
+    .btn-del { color: var(--red); border-color: rgba(230,57,70,0.3); background: rgba(230,57,70,0.1); width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; }
+
+    .btn-add-prod {
       width: 100%;
       background: transparent;
-      border: 1px dashed var(--accent);
-      color: var(--accent);
-      padding: 12px;
+      border: 1px dashed var(--accent-yellow);
+      color: var(--accent-yellow);
+      padding: 10px;
       border-radius: 8px;
       font-weight: 700;
+      font-size: 0.82rem;
       cursor: pointer;
-      margin-top: 10px;
+      margin: 12px 0 6px;
+      transition: background 0.15s;
     }
+    .btn-add-prod:hover { background: rgba(255, 183, 3, 0.08); }
 
-    .toast {
+    /* Toast */
+    .toast-msg {
       position: fixed;
       bottom: 25px;
       right: 25px;
       background: var(--green);
-      color: white;
-      padding: 14px 22px;
+      color: #fff;
+      padding: 12px 20px;
       border-radius: 8px;
       font-weight: 700;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.88rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
       display: none;
       z-index: 200;
     }
@@ -155,79 +304,176 @@
 </head>
 <body>
 
-  <header>
-    <div>
-      <div class="brand">CHIPPYS ADMIN</div>
-      <div style="font-size: 0.78rem; color: var(--muted);">Edita productos, precios o tamaños y publica directamente</div>
+  <!-- Modal de PIN / Password -->
+  <div class="login-overlay" id="login-modal">
+    <div class="login-box">
+      <div class="login-title">CHIPPYS</div>
+      <div class="login-desc">Ingresa el PIN de administrador para acceder a la gestión</div>
+      <form onsubmit="validarPIN(event)">
+        <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••" maxlength="8" autofocus>
+        <button type="submit" class="btn-login">Entrar al Panel</button>
+      </form>
     </div>
-    <button class="btn-save-cloud" onclick="guardarEnNpoint()">
-      🚀 Guardar y Publicar
-    </button>
+  </div>
+
+  <header>
+    <div class="brand-group">
+      <div class="brand-title">CHIPPYS</div>
+      <div class="status-pill">● Online</div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn-save" onclick="guardarEnNpoint()">
+        <span>🚀</span> Guardar y Publicar
+      </button>
+      <button class="btn-sub" onclick="cerrarSesion()" title="Cerrar sesión">Salir</button>
+    </div>
   </header>
 
+  <div class="controls-bar">
+    <input type="text" id="search-box" class="search-input" placeholder="🔍 Buscar producto por nombre o ingrediente..." oninput="filtrarProductos()">
+    <div class="cat-tabs" id="category-tabs"></div>
+  </div>
+
   <main class="container" id="admin-container">
-    <div style="text-align:center; padding: 40px; color: var(--muted);">Cargando la carta desde la nube...</div>
+    <div style="text-align:center; padding: 50px; color: var(--muted);">Cargando catálogo interactivo...</div>
   </main>
 
-  <div class="toast" id="toast">✅ ¡Menú actualizado y publicado al instante!</div>
+  <div class="toast-msg" id="toast-msg">✅ ¡Cambios publicados y sincronizados con el menú!</div>
 
   <script>
+    // ==========================================
+    // CONFIGURACIÓN DE SEGURIDAD Y NPOINT
+    // ==========================================
+    const ADMIN_PIN = "231721"; // <-- Cambia tu PIN o contraseña aquí
     const NPOINT_URL = "https://api.npoint.io/33c38c46118d1ae5d317"; 
 
     let menuData = [];
+    let categoriaActiva = "todas";
+
+    // Validar contraseña
+    function verificarSesion() {
+      if (sessionStorage.getItem('chippys_admin_auth') === 'true') {
+        document.getElementById('login-modal').style.display = 'none';
+        cargarDesdeNpoint();
+      }
+    }
+
+    function validarPIN(e) {
+      e.preventDefault();
+      const input = document.getElementById('admin-pin-field').value;
+      if (input === ADMIN_PIN) {
+        sessionStorage.setItem('chippys_admin_auth', 'true');
+        document.getElementById('login-modal').style.display = 'none';
+        cargarDesdeNpoint();
+      } else {
+        alert("PIN incorrecto");
+        document.getElementById('admin-pin-field').value = '';
+      }
+    }
+
+    function cerrarSesion() {
+      sessionStorage.removeItem('chippys_admin_auth');
+      location.reload();
+    }
 
     async function cargarDesdeNpoint() {
       const container = document.getElementById('admin-container');
       try {
         const res = await fetch(NPOINT_URL);
-        if (!res.ok) throw new Error("No se pudo conectar a la base de datos");
+        if (!res.ok) throw new Error("Error de conexión");
         menuData = await res.json();
+        renderTabs();
         renderAdmin();
       } catch (err) {
         container.innerHTML = `
-          <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 20px; border-radius: 8px; color: #fff;">
-            <b>Error de conexión:</b> No se pudo cargar el menú desde npoint.io.
+          <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 20px; border-radius: 8px; text-align:center;">
+            <b>Error al conectar con la base de datos:</b> Verifica tu conexión a internet o el enlace npoint.
           </div>
         `;
       }
     }
 
+    function renderTabs() {
+      const tabs = document.getElementById('category-tabs');
+      tabs.innerHTML = `
+        <button class="tab-btn ${categoriaActiva === 'todas' ? 'active' : ''}" onclick="cambiarFiltro('todas')">
+          🌟 Ver Todos
+        </button>
+      `;
+
+      menuData.forEach(cat => {
+        tabs.innerHTML += `
+          <button class="tab-btn ${categoriaActiva === cat.id ? 'active' : ''}" onclick="cambiarFiltro('${cat.id}')">
+            ${cat.icono} ${cat.categoria}
+          </button>
+        `;
+      });
+    }
+
+    function cambiarFiltro(catId) {
+      categoriaActiva = catId;
+      renderTabs();
+      renderAdmin();
+    }
+
+    function filtrarProductos() {
+      renderAdmin();
+    }
+
     function renderAdmin() {
       const container = document.getElementById('admin-container');
+      const busqueda = document.getElementById('search-box').value.toLowerCase().trim();
       container.innerHTML = '';
 
+      let totalCoincidencias = 0;
+
       menuData.forEach((cat, cIdx) => {
+        if (categoriaActiva !== 'todas' && cat.id !== categoriaActiva) return;
+
         let prodsHtml = '';
+        let productosFiltrados = 0;
 
         cat.productos.forEach((p, pIdx) => {
+          const coincideBusqueda = p.nombre.toLowerCase().includes(busqueda) || p.desc.toLowerCase().includes(busqueda);
+          if (!coincideBusqueda) return;
+
+          productosFiltrados++;
+          totalCoincidencias++;
+
           let extraHtml = '';
 
           if (p.variantes) {
             extraHtml = `
-              <div class="variants-box">
-                <span style="font-size:0.75rem; color:var(--accent); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
-                  Porciones / Tamaños:
+              <div class="variant-box">
+                <span style="font-size:0.72rem; color:var(--accent-yellow); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
+                  Tamaños / Porciones
                 </span>
                 ${p.variantes.map((v, vIdx) => `
                   <div class="variant-row">
-                    <input type="text" class="input-field" value="${v.tipo}" placeholder="Nombre tamaño (ej: 1 Kilo)" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].tipo = this.value">
-                    <input type="number" class="input-field" value="${v.precio}" placeholder="Precio $" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].precio = Number(this.value)">
-                    <button class="btn-action btn-del" onclick="eliminarVariante(${cIdx}, ${pIdx}, ${vIdx})">✕</button>
+                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Tamaño" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].tipo = this.value">
+                    <div class="price-input-wrap">
+                      <span>$</span>
+                      <input type="number" value="${v.precio}" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].precio = Number(this.value)">
+                    </div>
+                    <button class="btn-sub btn-del" onclick="eliminarVariante(${cIdx}, ${pIdx}, ${vIdx})">✕</button>
                   </div>
                 `).join('')}
-                <button class="btn-action" onclick="agregarVariante(${cIdx}, ${pIdx})">+ Añadir Tamaño (Ej: 1 Kilo)</button>
+                <button class="btn-sub" style="margin-top:4px;" onclick="agregarVariante(${cIdx}, ${pIdx})">+ Añadir Tamaño</button>
               </div>
             `;
           } else if (p.carnes) {
             extraHtml = `
-              <div class="variants-box">
-                <span style="font-size:0.75rem; color:var(--accent); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
-                  Precios por Proteína:
+              <div class="variant-box">
+                <span style="font-size:0.72rem; color:var(--accent-yellow); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
+                  Precios según Carne
                 </span>
                 ${p.carnes.map((c, carIdx) => `
-                  <div class="variant-row">
-                    <input type="text" class="input-field" value="${c.tipo}" disabled style="opacity:0.7;">
-                    <input type="number" class="input-field" value="${c.precio}" placeholder="Precio $" oninput="menuData[${cIdx}].productos[${pIdx}].carnes[${carIdx}].precio = Number(this.value)">
+                  <div class="variant-row" style="grid-template-columns: 1fr 100px;">
+                    <input type="text" class="input-clean" value="${c.tipo}" disabled style="opacity:0.65;">
+                    <div class="price-input-wrap">
+                      <span>$</span>
+                      <input type="number" value="${c.precio}" oninput="menuData[${cIdx}].productos[${pIdx}].carnes[${carIdx}].precio = Number(this.value)">
+                    </div>
                   </div>
                 `).join('')}
               </div>
@@ -235,39 +481,55 @@
           }
 
           prodsHtml += `
-            <div class="prod-row">
-              <div class="grid-main">
-                <input type="text" class="input-field" value="${p.nombre}" placeholder="Nombre del producto" oninput="menuData[${cIdx}].productos[${pIdx}].nombre = this.value">
+            <div class="prod-card">
+              <div class="grid-row-1">
+                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre producto" oninput="menuData[${cIdx}].productos[${pIdx}].nombre = this.value">
                 ${p.precio !== undefined ? `
-                  <input type="number" class="input-field" value="${p.precio}" placeholder="Precio $" oninput="menuData[${cIdx}].productos[${pIdx}].precio = Number(this.value)">
-                ` : '<div style="font-size:0.8rem; color:var(--muted); align-self:center;">(Precio definido por tamaño)</div>'}
+                  <div class="price-input-wrap">
+                    <span>$</span>
+                    <input type="number" value="${p.precio}" oninput="menuData[${cIdx}].productos[${pIdx}].precio = Number(this.value)">
+                  </div>
+                ` : '<div style="font-size:0.75rem; color:var(--muted);">(Multi-precio)</div>'}
               </div>
-              <textarea class="input-field" style="resize:vertical; height:50px;" placeholder="Descripción e ingredientes" oninput="menuData[${cIdx}].productos[${pIdx}].desc = this.value">${p.desc}</textarea>
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-                <input type="text" class="input-field" style="max-width:320px; font-size:0.75rem;" value="${p.img || ''}" placeholder="Ruta imagen (ej: img/producto.jpeg)" oninput="menuData[${cIdx}].productos[${pIdx}].img = this.value">
-                <button class="btn-action btn-del" onclick="eliminarProducto(${cIdx}, ${pIdx})">Eliminar</button>
+
+              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción" oninput="menuData[${cIdx}].productos[${pIdx}].desc = this.value">${p.desc}</textarea>
+              
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Foto (ej: img/producto.jpeg)" oninput="menuData[${cIdx}].productos[${pIdx}].img = this.value">
+                <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${cIdx}, ${pIdx})">Eliminar</button>
               </div>
+
               ${extraHtml}
             </div>
           `;
         });
 
-        container.innerHTML += `
-          <div class="cat-card">
-            <div class="cat-title">
-              <span>${cat.icono} ${cat.categoria}</span>
+        if (productosFiltrados > 0 || busqueda === '') {
+          container.innerHTML += `
+            <div class="cat-block">
+              <div class="cat-header">
+                <div class="cat-label">
+                  <span>${cat.icono}</span>
+                  <span>${cat.categoria}</span>
+                </div>
+                <div class="cat-badge">${cat.productos.length} ítems</div>
+              </div>
+              ${prodsHtml}
+              <div style="padding: 10px 18px 16px;">
+                <button class="btn-add-prod" onclick="agregarProducto(${cIdx})">+ Agregar nuevo producto a ${cat.categoria}</button>
+              </div>
             </div>
-            ${prodsHtml}
-            <div style="padding: 10px 20px 20px;">
-              <button class="btn-add-item" onclick="agregarProducto(${cIdx})">+ Agregar Producto a ${cat.categoria}</button>
-            </div>
-          </div>
-        `;
+          `;
+        }
       });
+
+      if (totalCoincidencias === 0 && busqueda !== '') {
+        container.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--muted);">No se encontraron productos para "${busqueda}".</div>`;
+      }
     }
 
     function agregarVariante(cIdx, pIdx) {
-      menuData[cIdx].productos[pIdx].variantes.push({ tipo: "1 Kilo", precio: 6990 });
+      menuData[cIdx].productos[pIdx].variantes.push({ tipo: "Nuevo Tamaño", precio: 0 });
       renderAdmin();
     }
 
@@ -279,8 +541,8 @@
     function agregarProducto(cIdx) {
       menuData[cIdx].productos.push({
         id: Date.now(),
-        nombre: "Nuevo Producto",
-        desc: "Descripción de ingredientes...",
+        nombre: "Nuevo Ítem",
+        desc: "Descripción / ingredientes...",
         precio: 5000,
         img: ""
       });
@@ -295,8 +557,9 @@
     }
 
     async function guardarEnNpoint() {
-      const btn = document.querySelector('.btn-save-cloud');
-      btn.innerText = "⏳ Guardando...";
+      const btn = document.querySelector('.btn-save');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span>⏳</span> Guardando...`;
       btn.disabled = true;
 
       try {
@@ -306,20 +569,20 @@
           body: JSON.stringify(menuData)
         });
 
-        if (!res.ok) throw new Error("Error al guardar");
+        if (!res.ok) throw new Error("Error en servidor");
 
-        const toast = document.getElementById('toast');
+        const toast = document.getElementById('toast-msg');
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, 3000);
       } catch (e) {
-        alert("Error al guardar en la nube.");
+        alert("Error al sincronizar con npoint.io. Revisa tu conexión.");
       } finally {
-        btn.innerText = "🚀 Guardar y Publicar";
+        btn.innerHTML = originalText;
         btn.disabled = false;
       }
     }
 
-    cargarDesdeNpoint();
+    verificarSesion();
   </script>
 </body>
 </html>
