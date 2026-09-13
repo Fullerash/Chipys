@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Chippys Admin - Gestión de Menú</title>
+  <title>Chippys Admin - Gestión Profesional</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
       --bg: #0f1013;
       --panel: #17181d;
       --card: #1f2026;
-      --card-inner: #272931;
+      --card-inner: #262832;
       --accent-yellow: #ffb703;
       --accent-orange: #fb8500;
       --text: #f8f9fa;
@@ -24,9 +24,9 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-    /* Modal de Login */
+    /* Modal Login */
     .login-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -75,9 +75,8 @@
       font-size: 0.95rem;
       cursor: pointer;
     }
-    .btn-login:active { opacity: 0.9; }
 
-    /* Topbar fija */
+    /* Topbar */
     header {
       background: rgba(23, 24, 29, 0.95);
       backdrop-filter: blur(12px);
@@ -113,7 +112,7 @@
     .btn-save:hover { opacity: 0.95; }
     .btn-save:active { transform: scale(0.98); }
 
-    /* Barra de control: Buscador y Filtros */
+    /* Barra de control */
     .controls-bar {
       background: var(--panel);
       border-bottom: 1px solid var(--border);
@@ -158,10 +157,9 @@
       border-color: var(--accent-yellow);
     }
 
-    /* Contenedor principal */
+    /* Contenedor */
     .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
 
-    /* Categoría */
     .cat-block {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -195,22 +193,23 @@
       border-radius: 12px;
     }
 
-    /* Tarjetas de Producto */
+    /* Cards */
     .prod-card {
-      padding: 16px 18px;
+      padding: 18px;
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
     .prod-card:last-child { border-bottom: none; }
 
-    .grid-row-1 {
+    .grid-header {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
       align-items: center;
     }
+
     .price-input-wrap {
       display: flex;
       align-items: center;
@@ -218,7 +217,7 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 4px 8px;
+      padding: 5px 9px;
     }
     .price-input-wrap span { color: var(--accent-yellow); font-weight: 700; font-size: 0.9rem; }
     .price-input-wrap input {
@@ -227,7 +226,7 @@
       color: #fff;
       font-weight: 700;
       font-size: 0.9rem;
-      width: 80px;
+      width: 85px;
     }
     .price-input-wrap input:focus { outline: none; }
 
@@ -235,23 +234,37 @@
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-radius: 6px;
       font-size: 0.85rem;
       width: 100%;
     }
     .input-clean:focus { outline: none; border-color: var(--accent-yellow); }
 
-    /* Variantes / Tamaños */
+    /* Variantes y Matriz Multiprecio */
     .variant-box {
       background: var(--card-inner);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
     }
+    .variant-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .variant-title {
+      font-size: 0.74rem;
+      color: var(--accent-yellow);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     .variant-row {
       display: grid;
-      grid-template-columns: 1fr 100px 32px;
+      grid-template-columns: 1fr 115px 32px;
       gap: 8px;
       margin-bottom: 6px;
       align-items: center;
@@ -261,9 +274,9 @@
       background: var(--card);
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
     }
@@ -275,15 +288,32 @@
       background: transparent;
       border: 1px dashed var(--accent-yellow);
       color: var(--accent-yellow);
-      padding: 10px;
+      padding: 12px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       cursor: pointer;
       margin: 12px 0 6px;
       transition: background 0.15s;
     }
     .btn-add-prod:hover { background: rgba(255, 183, 3, 0.08); }
+
+    .type-switcher {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .type-switcher select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
 
     /* Toast */
     .toast-msg {
@@ -292,7 +322,7 @@
       right: 25px;
       background: var(--green);
       color: #fff;
-      padding: 12px 20px;
+      padding: 14px 22px;
       border-radius: 8px;
       font-weight: 700;
       font-size: 0.88rem;
@@ -304,11 +334,11 @@
 </head>
 <body>
 
-  <!-- Modal de PIN / Password -->
+  <!-- Modal de PIN -->
   <div class="login-overlay" id="login-modal">
     <div class="login-box">
       <div class="login-title">CHIPPYS</div>
-      <div class="login-desc">Ingresa el PIN de administrador para acceder a la gestión</div>
+      <div class="login-desc">Ingresa el PIN de administrador para gestionar el menú</div>
       <form onsubmit="validarPIN(event)">
         <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••" maxlength="8" autofocus>
         <button type="submit" class="btn-login">Entrar al Panel</button>
@@ -322,7 +352,7 @@
       <div class="status-pill">● Online</div>
     </div>
     <div style="display:flex; gap:10px;">
-      <button class="btn-save" onclick="guardarEnNpoint()">
+      <button class="btn-save" onclick="guardarEnServidor()">
         <span>🚀</span> Guardar y Publicar
       </button>
       <button class="btn-sub" onclick="cerrarSesion()" title="Cerrar sesión">Salir</button>
@@ -330,15 +360,15 @@
   </header>
 
   <div class="controls-bar">
-    <input type="text" id="search-box" class="search-input" placeholder="🔍 Buscar producto por nombre o ingrediente..." oninput="filtrarProductos()">
+    <input type="text" id="search-box" class="search-input" placeholder="🔍 Buscar producto por nombre o descripción..." oninput="filtrarProductos()">
     <div class="cat-tabs" id="category-tabs"></div>
   </div>
 
   <main class="container" id="admin-container">
-    <div style="text-align:center; padding: 50px; color: var(--muted);">Cargando catálogo interactivo...</div>
+    <div style="text-align:center; padding: 50px; color: var(--muted);">Cargando catálogo en vivo...</div>
   </main>
 
-  <div class="toast-msg" id="toast-msg">✅ ¡Cambios publicados y sincronizados con el menú!</div>
+  <div class="toast-msg" id="toast-msg">✅ ¡Menú sincronizado y publicado al instante!</div>
 
   <script>
     const ADMIN_PIN = "231721";
@@ -392,7 +422,7 @@
       } catch (err) {
         container.innerHTML = `
           <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 20px; border-radius: 8px; text-align:center;">
-            <b>Error al conectar con la base de datos:</b> Verifica tu conexión a internet o el enlace npoint.
+            <b>Error de conexión:</b> No se pudo cargar la carta.
           </div>
         `;
       }
@@ -425,7 +455,6 @@
       renderAdmin();
     }
 
-    // Funciones auxiliares sin conflictos de comillas
     function obtenerProducto(prodId) {
       for (const cat of menuData) {
         const p = cat.productos.find(item => item.id == prodId);
@@ -471,6 +500,34 @@
       }
     }
 
+    // Cambiar dinámicamente estructura entre precio fijo y multiprecio
+    function cambiarEsquemaPrecio(prodId, nuevoEsquema) {
+      const p = obtenerProducto(prodId);
+      if (!p) return;
+
+      if (nuevoEsquema === 'carnes') {
+        delete p.precio;
+        delete p.variantes;
+        p.carnes = [
+          { tipo: "Lomito", precio: 3990 },
+          { tipo: "Churrasco", precio: 4490 },
+          { tipo: "Mechada", precio: 5290 }
+        ];
+      } else if (nuevoEsquema === 'variantes') {
+        delete p.precio;
+        delete p.carnes;
+        p.variantes = [
+          { tipo: "Normal", precio: 3500 },
+          { tipo: "Grande", precio: 4900 }
+        ];
+      } else {
+        delete p.carnes;
+        delete p.variantes;
+        p.precio = 5000;
+      }
+      renderAdmin();
+    }
+
     function renderAdmin() {
       const container = document.getElementById('admin-container');
       const busqueda = document.getElementById('search-box').value.toLowerCase().trim();
@@ -485,23 +542,25 @@
         let productosFiltrados = 0;
 
         cat.productos.forEach((p) => {
-          const coincideBusqueda = p.nombre.toLowerCase().includes(busqueda) || (p.desc && p.desc.toLowerCase().includes(busqueda));
-          if (!coincideBusqueda) return;
+          const coincide = p.nombre.toLowerCase().includes(busqueda) || (p.desc && p.desc.toLowerCase().includes(busqueda));
+          if (!coincide) return;
 
           productosFiltrados++;
           totalCoincidencias++;
 
           let extraHtml = '';
+          const esquemaActual = p.carnes ? 'carnes' : (p.variantes ? 'variantes' : 'fijo');
 
           if (p.variantes) {
             extraHtml = `
               <div class="variant-box">
-                <span style="font-size:0.72rem; color:var(--accent-yellow); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
-                  Tamaños / Porciones
-                </span>
+                <div class="variant-head">
+                  <span class="variant-title">📏 Tamaños / Porciones Multiprecio</span>
+                  <button class="btn-sub" onclick="agregarVariante(${p.id})">+ Añadir Tamaño</button>
+                </div>
                 ${p.variantes.map((v, vIdx) => `
                   <div class="variant-row">
-                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Tamaño" oninput="actualizarVarianteTipo(${p.id}, ${vIdx}, this.value)">
+                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Ej: Mediana, 1 Kilo..." oninput="actualizarVarianteTipo(${p.id}, ${vIdx}, this.value)">
                     <div class="price-input-wrap">
                       <span>$</span>
                       <input type="number" value="${v.precio}" oninput="actualizarVariantePrecio(${p.id}, ${vIdx}, this.value)">
@@ -509,18 +568,17 @@
                     <button class="btn-sub btn-del" onclick="eliminarVariante(${p.id}, ${vIdx})">✕</button>
                   </div>
                 `).join('')}
-                <button class="btn-sub" style="margin-top:4px;" onclick="agregarVariante(${p.id})">+ Añadir Tamaño</button>
               </div>
             `;
           } else if (p.carnes) {
             extraHtml = `
               <div class="variant-box">
-                <span style="font-size:0.72rem; color:var(--accent-yellow); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
-                  Precios según Carne
-                </span>
+                <div class="variant-head">
+                  <span class="variant-title">🥩 Multiprecio por Proteína</span>
+                </div>
                 ${p.carnes.map((c, carIdx) => `
-                  <div class="variant-row" style="grid-template-columns: 1fr 100px;">
-                    <input type="text" class="input-clean" value="${c.tipo}" disabled style="opacity:0.65;">
+                  <div class="variant-row" style="grid-template-columns: 1fr 115px;">
+                    <input type="text" class="input-clean" value="${c.tipo}" disabled style="opacity:0.75; font-weight:600;">
                     <div class="price-input-wrap">
                       <span>$</span>
                       <input type="number" value="${c.precio}" oninput="actualizarCarne(${p.id}, ${carIdx}, this.value)">
@@ -533,21 +591,30 @@
 
           prodsHtml += `
             <div class="prod-card">
-              <div class="grid-row-1">
-                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre producto" oninput="actualizarNombre(${p.id}, this.value)">
+              <div class="grid-header">
+                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre del producto" oninput="actualizarNombre(${p.id}, this.value)">
                 ${p.precio !== undefined ? `
                   <div class="price-input-wrap">
                     <span>$</span>
                     <input type="number" value="${p.precio}" oninput="actualizarPrecio(${p.id}, this.value)">
                   </div>
-                ` : '<div style="font-size:0.75rem; color:var(--muted);">(Multi-precio)</div>'}
+                ` : '<div style="font-size:0.75rem; color:var(--accent-orange); font-weight:700;">(Multiprecio Activo)</div>'}
               </div>
 
-              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción" oninput="actualizarDesc(${p.id}, this.value)">${p.desc || ''}</textarea>
+              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción..." oninput="actualizarDesc(${p.id}, this.value)">${p.desc || ''}</textarea>
               
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Foto (ej: img/producto.jpeg)" oninput="actualizarImg(${p.id}, this.value)">
-                <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${p.id})">Eliminar</button>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Ruta foto (ej: img/producto.jpeg)" oninput="actualizarImg(${p.id}, this.value)">
+                
+                <div class="type-switcher">
+                  <span>Esquema:</span>
+                  <select onchange="cambiarEsquemaPrecio(${p.id}, this.value)">
+                    <option value="fijo" ${esquemaActual === 'fijo' ? 'selected' : ''}>Precio Único</option>
+                    <option value="variantes" ${esquemaActual === 'variantes' ? 'selected' : ''}>Tamaños (Normal/Grande)</option>
+                    <option value="carnes" ${esquemaActual === 'carnes' ? 'selected' : ''}>Proteínas (Lomito/Churrasco/Mechada)</option>
+                  </select>
+                  <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                </div>
               </div>
 
               ${extraHtml}
@@ -566,8 +633,10 @@
                 <div class="cat-badge">${cat.productos.length} ítems</div>
               </div>
               ${prodsHtml}
-              <div style="padding: 10px 18px 16px;">
-                <button class="btn-add-prod" onclick="agregarProducto('${cat.id}')">+ Agregar nuevo producto a ${cat.categoria}</button>
+              <div style="padding: 12px 18px 16px;">
+                <button class="btn-add-prod" onclick="crearProductoInteligente('${cat.id}')">
+                  + Crear Nuevo Ítem en ${cat.categoria}
+                </button>
               </div>
             </div>
           `;
@@ -577,6 +646,52 @@
       if (totalCoincidencias === 0 && busqueda !== '') {
         container.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--muted);">No se encontraron productos para "${busqueda}".</div>`;
       }
+    }
+
+    // Creador inteligente según el tipo de categoría
+    function crearProductoInteligente(catId) {
+      const cat = menuData.find(c => c.id === catId);
+      if (!cat) return;
+
+      const nuevoId = Date.now();
+      let nuevoProd = {
+        id: nuevoId,
+        nombre: "Nuevo Ítem",
+        desc: "Descripción de ingredientes...",
+        img: ""
+      };
+
+      if (catId === 'sandwiches') {
+        // Matriz de 3 carnes
+        nuevoProd.carnes = [
+          { tipo: "Lomito", precio: 3990 },
+          { tipo: "Churrasco", precio: 4490 },
+          { tipo: "Mechada", precio: 5290 }
+        ];
+      } else if (catId === 'vienesas' || catId === 'as') {
+        // Tamaños Normal y Grande
+        nuevoProd.variantes = [
+          { tipo: "Normal", precio: 2990 },
+          { tipo: "Grande", precio: 3990 }
+        ];
+      } else if (catId === 'papas') {
+        // Formatos de papas
+        nuevoProd.variantes = [
+          { tipo: "Mediana", precio: 4990 },
+          { tipo: "L", precio: 6490 }
+        ];
+      } else {
+        // Precio único para smash, bebidas, promos, etc.
+        nuevoProd.precio = 6990;
+      }
+
+      cat.productos.push(nuevoProd);
+      renderAdmin();
+
+      // Scroll automático al nuevo producto
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 100);
     }
 
     function agregarVariante(prodId) {
@@ -596,23 +711,9 @@
       }
     }
 
-    function agregarProducto(catId) {
-      const cat = menuData.find(c => c.id === catId);
-      if (cat) {
-        cat.productos.push({
-          id: Date.now(),
-          nombre: "Nuevo Ítem",
-          desc: "Descripción / ingredientes...",
-          precio: 5000,
-          img: ""
-        });
-        renderAdmin();
-      }
-    }
-
     function eliminarProducto(prodId) {
       const p = obtenerProducto(prodId);
-      if (p && confirm(`¿Eliminar ${p.nombre}?`)) {
+      if (p && confirm(`¿Seguro que deseas eliminar "${p.nombre}"?`)) {
         for (const cat of menuData) {
           const idx = cat.productos.findIndex(item => item.id == prodId);
           if (idx !== -1) {
@@ -624,10 +725,10 @@
       }
     }
 
-    async function guardarEnNpoint() {
+    async function guardarEnServidor() {
       const btn = document.querySelector('.btn-save');
       const originalText = btn.innerHTML;
-      btn.innerHTML = `<span>⏳</span> Guardando...`;
+      btn.innerHTML = `<span>⏳</span> Publicando...`;
       btn.disabled = true;
 
       const pinSesion = sessionStorage.getItem('chippys_admin_pin') || '';
@@ -647,14 +748,14 @@
         const resultado = await res.json();
 
         if (!res.ok) {
-          throw new Error(resultado.error || 'Error al guardar');
+          throw new Error(resultado.error || 'Error en el servidor');
         }
 
         const toast = document.getElementById('toast-msg');
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, 3000);
       } catch (e) {
-        console.error("Error al guardar:", e);
+        console.error("Error al publicar:", e);
         alert(`No se pudo publicar el menú:\n${e.message}`);
       } finally {
         btn.innerHTML = originalText;
