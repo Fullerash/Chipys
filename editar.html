@@ -359,17 +359,18 @@
     }
 
     function validarPIN(e) {
-      e.preventDefault();
-      const input = document.getElementById('admin-pin-field').value;
-      if (input === ADMIN_PIN) {
-        sessionStorage.setItem('chippys_admin_auth', 'true');
-        document.getElementById('login-modal').style.display = 'none';
-        cargarDesdeNpoint();
-      } else {
-        alert("PIN incorrecto");
-        document.getElementById('admin-pin-field').value = '';
-      }
-    }
+  e.preventDefault();
+  const input = document.getElementById('admin-pin-field').value;
+  if (input === ADMIN_PIN) {
+    sessionStorage.setItem('chippys_admin_auth', 'true');
+    sessionStorage.setItem('chippys_admin_pin', input); // <-- Guardar PIN para las peticiones API
+    document.getElementById('login-modal').style.display = 'none';
+    cargarDesdeNpoint();
+  } else {
+    alert("PIN incorrecto");
+    document.getElementById('admin-pin-field').value = '';
+  }
+}
 
     function cerrarSesion() {
       sessionStorage.removeItem('chippys_admin_auth');
