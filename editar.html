@@ -565,17 +565,23 @@
       try {
         const res = await fetch(NPOINT_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(menuData)
         });
 
-        if (!res.ok) throw new Error("Error en servidor");
+        if (!res.ok) {
+          const errorDetalle = await res.text();
+          throw new Error(`Código ${res.status}: ${errorDetalle}`);
+        }
 
         const toast = document.getElementById('toast-msg');
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, 3000);
       } catch (e) {
-        alert("Error al sincronizar con npoint.io. Revisa tu conexión.");
+        console.error("Error al guardar:", e);
+        alert(`Error al sincronizar con npoint.io:\n${e.message}\n\nAbre la consola (F12) para más detalles.`);
       } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
