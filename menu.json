@@ -1,1 +1,118 @@
-
+[
+  {
+    "id": "smash",
+    "categoria": "Smash Burgers",
+    "icono": "🍔",
+    "permiteCombo": true,
+    "permiteAgrandar": true,
+    "productos": [
+      { "id": 1, "nombre": "Smash Clasic Burger", "desc": "Pan de papa tostado, carne smash, Queso gauda, lechuga fresca, tomate y mayonesa.", "precio": 6990, "img": "img/clasic.jpeg" },
+      { "id": 2, "nombre": "Smash Hot Chippys", "desc": "Pan de papa tostado, carne smash, queso cheddar, jalapeños, cebolla en cubos, y nuestra irresistible mermelada de tocino.", "precio": 7990, "img": "img/hot-chippys.jpeg" },
+      { "id": 3, "nombre": "Smash Big Chippys", "desc": "Pan de papa tostado, carne smash, lechuga fresca, pepinillos y nuestra cremosa salsa Big.", "precio": 7990, "img/big-chippys.jpeg" },
+      { "id": 4, "nombre": "Smash Funghi Burger", "desc": "Pan de papa tostado, carne smash, base de cebolla en cubos, champiñones salteados y cebolla caramelizada.", "precio": 7990, "img/funghi.jpeg" },
+      { "id": 5, "nombre": "Smash Texana", "desc": "Pan de papa tostado, carne smash, queso cheddar, cebolla caramelizada, salsa BBQ y tocino.", "precio": 7990, "img/texana.jpeg" },
+      { "id": 6, "nombre": "Smash Deluxe", "desc": "Pan de papa tostado, carne smash, queso, cebolla caramelizada, tocino crujiente y camarones ecuatorianos.", "precio": 8990, "img/deluxe.jpeg" }
+    ]
+  },
+  {
+    "id": "vienesas",
+    "categoria": "Vienesas",
+    "icono": "🌭",
+    "permiteCombo": true,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 10, "nombre": "Vienesa Italiana", "desc": "Palta, tomate y mayonesa.", "variantes": [{ "tipo": "Normal", "precio": 2400 }, { "tipo": "Grande", "precio": 3600 }] },
+      { "id": 11, "nombre": "Completo", "desc": "Chucrut, americana y tomate.", "variantes": [{ "tipo": "Normal", "precio": 2400 }, { "tipo": "Grande", "precio": 3600 }] },
+      { "id": 12, "nombre": "Vienesa Chacarero", "desc": "Tomate, poroto verde y mayonesa.", "variantes": [{ "tipo": "Normal", "precio": 2400 }, { "tipo": "Grande", "precio": 3600 }] },
+      { "id": 13, "nombre": "Vienesa Mexican", "desc": "Guacamole, papa hilo y una fresca salsa de ciboulette.", "variantes": [{ "tipo": "Normal", "precio": 3200 }, { "tipo": "Grande", "precio": 4200 }] },
+      { "id": 14, "nombre": "Vienesa Texana", "desc": "Queso cheddar, cebolla caramelizada, salsa BBQ y tocino crujiente.", "variantes": [{ "tipo": "Normal", "precio": 3200 }, { "tipo": "Grande", "precio": 4200 }] },
+      { "id": 15, "nombre": "Vienesa Brasileño", "desc": "Palta y queso fundido.", "variantes": [{ "tipo": "Normal", "precio": 2400 }, { "tipo": "Grande", "precio": 3600 }] }
+    ]
+  },
+  {
+    "id": "as",
+    "categoria": "As",
+    "icono": "🥩",
+    "permiteCombo": true,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 20, "nombre": "As Hot Spicy", "desc": "Carne de churrasco, cebolla caramelizada, salsa spicy de jalapeño y mermelada de tocino.", "variantes": [{ "tipo": "Normal", "precio": 4500 }, { "tipo": "Grande", "precio": 5500 }] },
+      { "id": 21, "nombre": "As Italiano", "desc": "Carne de churrasco, tomate, palta y mayonesa.", "variantes": [{ "tipo": "Normal", "precio": 3700 }, { "tipo": "Grande", "precio": 4990 }] },
+      { "id": 22, "nombre": "As Chacarero", "desc": "Carne de churrasco, tomate, poroto verde y mayonesa.", "variantes": [{ "tipo": "Normal", "precio": 3700 }, { "tipo": "Grande", "precio": 4990 }] },
+      { "id": 23, "nombre": "As Mexican", "desc": "Carne de churrasco, guacamole, papa hilo y una fresca salsa de ciboulette.", "variantes": [{ "tipo": "Normal", "precio": 4500 }, { "tipo": "Grande", "precio": 5500 }] },
+      { "id": 24, "nombre": "As Brasileño", "desc": "Carne de churrasco, palta y queso fundido.", "variantes": [{ "tipo": "Normal", "precio": 3700 }, { "tipo": "Grande", "precio": 4990 }] },
+      { "id": 25, "nombre": "As Barros Luco", "desc": "Carne de churrasco con abundante queso fundido.", "variantes": [{ "tipo": "Normal", "precio": 3700 }, { "tipo": "Grande", "precio": 4990 }] }
+    ]
+  },
+  {
+    "id": "sandwiches",
+    "categoria": "Sandwiches (Lomito / Churrasco / Mechada)",
+    "icono": "🍔",
+    "permiteCombo": true,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 30, "nombre": "Sandwich Italiano", "desc": "Proteína a elección, palta, tomate y mayo.", "carnes": [{ "tipo": "Lomito", "precio": 3990 }, { "tipo": "Churrasco", "precio": 4490 }, { "tipo": "Mechada", "precio": 5290 }] },
+      { "id": 31, "nombre": "Sandwich A Lo Pobre", "desc": "Proteína a elección, cebolla caramelizada y huevo frito.", "carnes": [{ "tipo": "Lomito", "precio": 4990 }, { "tipo": "Churrasco", "precio": 5490 }, { "tipo": "Mechada", "precio": 6300 }] },
+      { "id": 32, "nombre": "Sandwich Chacarero", "desc": "Proteína a elección, tomate, poroto verde, ají verde y mayonesa.", "carnes": [{ "tipo": "Lomito", "precio": 3990 }, { "tipo": "Churrasco", "precio": 4490 }, { "tipo": "Mechada", "precio": 5290 }] },
+      { "id": 33, "nombre": "Sandwich Clasic Meat", "desc": "Proteína a elección, lechuga, tomate y salsa fresca de ciboulette.", "carnes": [{ "tipo": "Lomito", "precio": 3990 }, { "tipo": "Churrasco", "precio": 4490 }, { "tipo": "Mechada", "precio": 5290 }] },
+      { "id": 34, "nombre": "Sandwich Barros Luco", "desc": "Proteína a elección con abundante queso fundido.", "carnes": [{ "tipo": "Lomito", "precio": 3990 }, { "tipo": "Churrasco", "precio": 4490 }, { "tipo": "Mechada", "precio": 5290 }] },
+      { "id": 35, "nombre": "Sandwich Texano", "desc": "Proteína a elección, queso cheddar, cebolla caramelizada, BBQ y tocino crujiente.", "carnes": [{ "tipo": "Lomito", "precio": 4990 }, { "tipo": "Churrasco", "precio": 5490 }, { "tipo": "Mechada", "precio": 6300 }] }
+    ]
+  },
+  {
+    "id": "papas",
+    "categoria": "Papas Fritas",
+    "icono": "🍟",
+    "permiteCombo": false,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 40, "nombre": "Papas Solas", "desc": "Papas fritas crujientes.", "variantes": [{ "tipo": "Simple", "precio": 2990 }, { "tipo": "Mediana", "precio": 3990 }, { "tipo": "L", "precio": 4990 }] },
+      { "id": 41, "nombre": "Papas Supremas", "desc": "Queso cheddar, churrasco, tomate y cebollín.", "variantes": [{ "tipo": "Mediana", "precio": 6400 }, { "tipo": "L", "precio": 7400 }] },
+      { "id": 42, "nombre": "Papas Chippys", "desc": "Queso cheddar y tocino crujiente.", "variantes": [{ "tipo": "Mediana", "precio": 6400 }, { "tipo": "L", "precio": 7990 }] },
+      { "id": 43, "nombre": "Chorrillana Chippys", "desc": "Cebolla caramelizada, carne y huevo frito.", "variantes": [{ "tipo": "Mediana", "precio": 5990 }, { "tipo": "L", "precio": 7490 }] },
+      { "id": 44, "nombre": "Salchipapas", "desc": "Papas fritas con vienesa en rodajas.", "variantes": [{ "tipo": "Mediana", "precio": 4990 }, { "tipo": "L", "precio": 5990 }] },
+      { "id": 45, "nombre": "Papas Funghi", "desc": "Queso derretido, champiñones salteados y ciboulette.", "variantes": [{ "tipo": "Mediana", "precio": 6400 }, { "tipo": "L", "precio": 7990 }] }
+    ]
+  },
+  {
+    "id": "compartir",
+    "categoria": "Para Compartir & Promos",
+    "icono": "🍗",
+    "permiteCombo": false,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 50, "nombre": "Chippy-Promo", "desc": "Porción para compartir: 6 Nuggets + 6 Empanadas + 6 Aros de cebolla + 1 Porción de Papas fritas.", "precio": 6990 },
+      { "id": 51, "nombre: "Porción de Nuggets", "desc": "6 unidades crujientes.", "precio": 2690 },
+      { "id": 52, "nombre": "Porción Empanadas de Queso", "desc": "6 unidades.", "precio": 2690 },
+      { "id": 53, "nombre": "Aros de Cebolla", "desc": "6 unidades.", "precio": 2590 }
+    ]
+  },
+  {
+    "id": "bebestibles",
+    "categoria": "Bebestibles",
+    "icono": "🥤",
+    "permiteCombo": false,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 60, "nombre": "Bebida Express", "desc": "Formato individual pequeño.", "precio": 800 },
+      { "id": 61, "nombre": "Bebida en Lata", "desc": "350ml fría.", "precio": 1100 },
+      { "id": 62, "nombre": "Bebida 1.5 Litros", "desc": "Ideal para compartir.", "precio": 2300 },
+      { "id": 63, "nombre": "Bebida 3 Litros", "desc": "Formato familiar.", "precio": 3500 },
+      { "id": 64, "nombre": "Jugo Individual", "desc": "Botella individual.", "precio": 1490 }
+    ]
+  },
+  {
+    "id": "pasteleria",
+    "categoria": "Pastelería",
+    "icono": "🧁",
+    "permiteCombo": false,
+    "permiteAgrandar": false,
+    "productos": [
+      { "id": 70, "nombre": "Waffle", "desc": "Base + 2 Bolas de helado + Fruta + 2 Toppings + Crema chantilly + Salsa. (Solo Retiro en local / Mesa).", "precio": 6500, "img": "img/waffles.jpeg", "soloRetiro": true, "esWaffle": true },
+      { "id": 71, "nombre": "Copa Helada", "desc": "5 Bolas de helado + 1 Mini Donut + 1 Fruta + 2 Toppings + Crema chantilly + Salsa. (Solo Retiro en local / Mesa).", "precio": 6500, "img": "img/copa-helada.jpeg", "soloRetiro": true, "esCopa": true },
+      { "id": 72, "nombre": "Muffin", "desc": "1 por $1.700 o 2 por $3.000.", "precio": 1700 },
+      { "id": 73, "nombre": "Galletas", "desc": "1 por $1.100 o 3 por $3.000.", "precio": 1000 },
+      { "id": 74, "nombre": "Media Luna", "desc": "1 por $1.000 o 3 por $2.500.", "precio": 1000 }
+    ]
+  }
+]
