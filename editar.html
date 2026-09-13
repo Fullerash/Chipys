@@ -52,12 +52,30 @@
     let menuData = [];
 
     async function cargarDatos() {
+      const container = document.getElementById('editor-container');
       try {
-        const res = await fetch('menu.json');
-        menuData = await res.json();
+        const res = await fetch('./menu.json');
+        
+        if (!res.ok) {
+          throw new Error(`El servidor respondió con código ${res.status} (${res.statusText}). El archivo menu.json no fue encontrado en esta ruta.`);
+        }
+
+        const texto = await res.text();
+        try {
+          menuData = JSON.parse(texto);
+        } catch (jsonErr) {
+          throw new Error(`Error de sintaxis en menu.json: ${jsonErr.message}. Revisa si falta una comilla o sobra una coma.`);
+        }
+
         renderEditor();
       } catch (err) {
-        document.getElementById('editor-container').innerHTML = '<p style="color:red;">Error al cargar menu.json. Verifica que el archivo exista en la misma carpeta.</p>';
+        container.innerHTML = `
+          <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 15px; border-radius: 8px;">
+            <p style="color: var(--red); font-weight: 700; margin-bottom: 6px;">⚠️ No se pudo cargar menu.json</p>
+            <p style="font-size: 0.85rem; color: #fff;">${err.message}</p>
+          </div>
+        `;
+        console.error(err);
       }
     }
 
