@@ -2,510 +2,441 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Chippys Admin - Gestión Profesional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chippys Backoffice - Gestión de Menú</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f1013;
-      --panel: #17181d;
-      --card: #1f2026;
-      --card-inner: #262832;
-      --accent-yellow: #ffb703;
-      --accent-orange: #fb8500;
-      --text: #f8f9fa;
-      --muted: #9499a8;
-      --dim: #5c6170;
-      --border: #2d3039;
-      --red: #e63946;
-      --green: #25d366;
+      --bg-body: #0b0c10;
+      --bg-surface: #14161d;
+      --bg-card: #1c1f2b;
+      --bg-input: #0f1118;
+      --border-subtle: #292d3e;
+      --border-focus: #ffb703;
+      --brand-accent: #ffb703;
+      --brand-orange: #fb8500;
+      --text-main: #f4f6fc;
+      --text-muted: #8e95aa;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --success: #22c55e;
+      --success-bg: rgba(34, 197, 94, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; padding-bottom: 90px; }
 
-    /* Modal Login */
-    .login-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 16, 19, 0.98);
-      backdrop-filter: blur(16px);
-      z-index: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Login Lockscreen */
+    .lock-overlay {
+      position: fixed; inset: 0;
+      background: rgba(11, 12, 16, 0.94);
+      backdrop-filter: blur(14px);
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
       padding: 20px;
     }
-    .login-box {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--accent-yellow);
-      border-radius: 16px;
-      padding: 30px 24px;
-      width: 100%;
-      max-width: 360px;
+    .lock-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      width: 100%; max-width: 380px;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
     }
-    .login-title { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 900; color: var(--accent-yellow); margin-bottom: 6px; }
-    .login-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; }
-    .pin-input {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 1.3rem;
-      text-align: center;
-      letter-spacing: 5px;
-      margin-bottom: 14px;
-    }
-    .pin-input:focus { outline: none; border-color: var(--accent-yellow); }
-    .btn-login {
-      width: 100%;
-      background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-orange) 100%);
-      color: #000;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
+    .lock-brand { font-size: 1.5rem; font-weight: 800; color: var(--brand-accent); letter-spacing: 1px; margin-bottom: 6px; }
+    .lock-desc { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 22px; }
 
-    /* Topbar */
-    header {
-      background: rgba(23, 24, 29, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 22px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-    }
-    .brand-group { display: flex; align-items: center; gap: 12px; }
-    .brand-title { font-family: 'Montserrat', sans-serif; font-size: 1.35rem; font-weight: 900; color: var(--accent-yellow); letter-spacing: 1px; }
-    .status-pill { background: rgba(37, 211, 102, 0.12); color: var(--green); border: 1px solid rgba(37, 211, 102, 0.25); font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-
-    .btn-save {
-      background: linear-gradient(135deg, var(--green) 0%, #1eaa4e 100%);
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.88rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
-      transition: opacity 0.15s, transform 0.15s;
-    }
-    .btn-save:hover { opacity: 0.95; }
-    .btn-save:active { transform: scale(0.98); }
-
-    /* Barra de control */
-    .controls-bar {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .search-input {
+    /* Inputs y botones */
+    .input-field {
       width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: #fff;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
       padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-    }
-    .search-input:focus { outline: none; border-color: var(--accent-yellow); }
-
-    .cat-tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      white-space: nowrap;
-      scrollbar-width: none;
-    }
-    .cat-tabs::-webkit-scrollbar { display: none; }
-    .tab-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 7px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .tab-btn.active, .tab-btn:hover {
-      background: var(--accent-yellow);
-      color: #000;
-      border-color: var(--accent-yellow);
-    }
-
-    /* Contenedor */
-    .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
-
-    .cat-block {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 25px;
-      overflow: hidden;
-    }
-    .cat-header {
-      background: rgba(255, 183, 3, 0.05);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .cat-label {
-      font-family: 'Montserrat';
-      font-weight: 800;
-      font-size: 1.05rem;
-      color: var(--accent-yellow);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .cat-badge {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.72rem;
-      padding: 3px 8px;
-      border-radius: 12px;
-    }
-
-    /* Cards */
-    .prod-card {
-      padding: 18px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .prod-card:last-child { border-bottom: none; }
-
-    .grid-header {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .price-input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 5px 9px;
-    }
-    .price-input-wrap span { color: var(--accent-yellow); font-weight: 700; font-size: 0.9rem; }
-    .price-input-wrap input {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-weight: 700;
+      border-radius: var(--radius-sm);
       font-size: 0.9rem;
-      width: 85px;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .price-input-wrap input:focus { outline: none; }
+    .input-field:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.15); }
 
-    .input-clean {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 9px 12px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      width: 100%;
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 18px; border-radius: var(--radius-sm);
+      font-size: 0.86rem; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.18s ease;
     }
-    .input-clean:focus { outline: none; border-color: var(--accent-yellow); }
-
-    /* Variantes y Matriz Multiprecio */
-    .variant-box {
-      background: var(--card-inner);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-    }
-    .variant-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .variant-title {
-      font-size: 0.74rem;
-      color: var(--accent-yellow);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .variant-row {
-      display: grid;
-      grid-template-columns: 1fr 115px 32px;
-      gap: 8px;
-      margin-bottom: 6px;
-      align-items: center;
-    }
-
-    .btn-sub {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-sub:hover { color: #fff; border-color: var(--muted); }
-    .btn-del { color: var(--red); border-color: rgba(230,57,70,0.3); background: rgba(230,57,70,0.1); width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; }
-
-    .btn-add-prod {
-      width: 100%;
-      background: transparent;
-      border: 1px dashed var(--accent-yellow);
-      color: var(--accent-yellow);
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      margin: 12px 0 6px;
-      transition: background 0.15s;
-    }
-    .btn-add-prod:hover { background: rgba(255, 183, 3, 0.08); }
-
-    .type-switcher {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-    .type-switcher select {
-      background: var(--bg);
-      border: 1px solid var(--border);
+    .btn-primary { background: var(--brand-accent); color: #000; }
+    .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-publish {
+      background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
       color: #fff;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.28);
     }
+    .btn-publish:hover { opacity: 0.94; transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border-subtle); }
+    .btn-ghost:hover { color: var(--text-main); border-color: var(--text-muted); }
+    .btn-danger-ghost { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+    .btn-danger-ghost:hover { background: var(--danger); color: #fff; }
+
+    /* Top Navbar */
+    header {
+      background: rgba(20, 22, 29, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky; top: 0; z-index: 100;
+      padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center; gap: 15px;
+    }
+    .brand-cluster { display: flex; align-items: center; gap: 12px; }
+    .badge-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--success-bg); color: var(--success);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      padding: 3px 10px; border-radius: 30px; font-size: 0.72rem; font-weight: 700;
+    }
+
+    /* Barra de Navegación y Filtros */
+    .filter-bar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 24px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .tabs-wrapper {
+      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs-wrapper::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 8px 16px; border-radius: 30px;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .nav-tab.active { background: var(--brand-accent); color: #000; border-color: var(--brand-accent); font-weight: 700; }
+
+    /* Contenedor y Grupos de Categorías */
+    .main-wrapper { max-width: 960px; margin: 24px auto; padding: 0 18px; }
+    .category-group {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px; overflow: hidden;
+    }
+    .category-group-header {
+      padding: 14px 20px;
+      background: rgba(255, 183, 3, 0.04);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .category-group-title { font-size: 1rem; font-weight: 800; color: var(--brand-accent); display: flex; align-items: center; gap: 8px; }
+    .category-count { background: var(--bg-card); padding: 2px 8px; border-radius: 12px; font-size: 0.74rem; color: var(--text-muted); }
+
+    /* Tarjetas de Producto */
+    .product-row {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex; flex-direction: column; gap: 14px;
+      background: var(--bg-surface);
+      transition: background-color 0.15s ease;
+    }
+    .product-row:last-child { border-bottom: none; }
+    .product-row:hover { background: rgba(255, 255, 255, 0.015); }
+
+    .prod-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 150px;
+      gap: 12px;
+      align-items: center;
+    }
+    @media (max-width: 640px) {
+      .prod-main-grid { grid-template-columns: 1fr; }
+    }
+
+    .price-badge-box {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+    }
+    .price-badge-box span { color: var(--brand-accent); font-weight: 800; }
+    .price-badge-box input {
+      background: transparent; border: none; color: #fff;
+      font-weight: 700; width: 100%; outline: none; font-size: 0.95rem;
+    }
+
+    /* Cajas Multiprecio */
+    .multiprice-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+    .multiprice-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; font-size: 0.74rem; font-weight: 800; color: var(--brand-accent); text-transform: uppercase;
+    }
+    .variant-line {
+      display: grid;
+      grid-template-columns: 1fr 130px 36px;
+      gap: 8px; margin-bottom: 8px; align-items: center;
+    }
+    .variant-line:last-child { margin-bottom: 0; }
+
+    /* Acciones inferiores de la fila */
+    .prod-footer-row {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px; padding-top: 4px;
+    }
+    .scheme-badge {
+      font-size: 0.76rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px;
+    }
+    .scheme-badge select {
+      background: var(--bg-input); border: 1px solid var(--border-subtle);
+      color: var(--text-main); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem;
+    }
+
+    /* Modal emergente para agregar producto */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 800;
+      display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-window {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      width: 100%; max-width: 520px;
+      padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    .modal-window-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; }
+    .modal-window-title { font-size: 1.1rem; font-weight: 800; color: var(--brand-accent); }
 
     /* Toast */
-    .toast-msg {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: var(--green);
-      color: #fff;
-      padding: 14px 22px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.88rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-      display: none;
-      z-index: 200;
+    .toast-pill {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--success); color: #fff;
+      padding: 12px 20px; border-radius: 30px;
+      font-weight: 700; font-size: 0.88rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: none; z-index: 900;
     }
   </style>
 </head>
 <body>
 
-  <!-- Modal de PIN -->
-  <div class="login-overlay" id="login-modal">
-    <div class="login-box">
-      <div class="login-title">CHIPPYS</div>
-      <div class="login-desc">Ingresa el PIN de administrador para gestionar el menú</div>
-      <form onsubmit="validarPIN(event)">
-        <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••" maxlength="8" autofocus>
-        <button type="submit" class="btn-login">Entrar al Panel</button>
+  <!-- Modal Acceso Seguro -->
+  <div class="lock-overlay" id="lock-screen">
+    <div class="lock-card">
+      <div class="lock-brand">CHIPPYS</div>
+      <p class="lock-desc">Panel Administrativo del Catálogo</p>
+      <form id="login-form" onsubmit="handleAuth(event)">
+        <input type="password" id="auth-input" class="input-field" placeholder="Ingresa PIN de acceso" maxlength="8" autofocus style="text-align:center; font-size:1.2rem; letter-spacing:4px; margin-bottom:14px;">
+        <button type="submit" class="btn btn-primary" style="width:100%;">Desbloquear Panel</button>
       </form>
     </div>
   </div>
 
+  <!-- Header Superior -->
   <header>
-    <div class="brand-group">
-      <div class="brand-title">CHIPPYS</div>
-      <div class="status-pill">● Online</div>
+    <div class="brand-cluster">
+      <span style="font-weight:900; font-size:1.25rem; color:var(--brand-accent); letter-spacing:0.5px;">CHIPPYS ADMIN</span>
+      <span class="badge-status">● Sistema Conectado</span>
     </div>
     <div style="display:flex; gap:10px;">
-      <button class="btn-save" onclick="guardarEnServidor()">
+      <button class="btn btn-publish" onclick="persistirDatosServidor()">
         <span>🚀</span> Guardar y Publicar
       </button>
-      <button class="btn-sub" onclick="cerrarSesion()" title="Cerrar sesión">Salir</button>
+      <button class="btn btn-ghost" onclick="cerrarSesion()">Salir</button>
     </div>
   </header>
 
-  <div class="controls-bar">
-    <input type="text" id="search-box" class="search-input" placeholder="🔍 Buscar producto por nombre o descripción..." oninput="filtrarProductos()">
-    <div class="cat-tabs" id="category-tabs"></div>
+  <!-- Filtros -->
+  <div class="filter-bar">
+    <input type="text" id="quick-search" class="input-field" placeholder="Buscar por nombre o ingredientes..." oninput="filtrarEnPantalla()">
+    <div class="tabs-wrapper" id="tabs-container"></div>
   </div>
 
-  <main class="container" id="admin-container">
-    <div style="text-align:center; padding: 50px; color: var(--muted);">Cargando catálogo en vivo...</div>
+  <!-- Contenedor Principal -->
+  <main class="main-wrapper" id="content-container">
+    <div style="text-align:center; padding: 60px; color:var(--text-muted);">Sincronizando carta digital...</div>
   </main>
 
-  <div class="toast-msg" id="toast-msg">✅ ¡Menú sincronizado y publicado al instante!</div>
+  <!-- Modal Estable para Crear Ítems -->
+  <div class="modal-backdrop" id="create-modal">
+    <div class="modal-window">
+      <div class="modal-window-header">
+        <span class="modal-window-title" id="create-modal-cat-name">Nuevo Ítem</span>
+        <button type="button" class="btn btn-ghost" style="padding:4px 8px;" onclick="cerrarModalCreacion()">✕</button>
+      </div>
+
+      <input type="hidden" id="new-item-cat-id">
+
+      <div>
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">NOMBRE DEL PRODUCTO</label>
+        <input type="text" id="new-item-name" class="input-field" placeholder="Ej: Smash Especial Doble">
+      </div>
+
+      <div>
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">DESCRIPCIÓN / INGREDIENTES</label>
+        <textarea id="new-item-desc" class="input-field" style="resize:vertical; height:60px;" placeholder="Pan de papa, queso fundido..."></textarea>
+      </div>
+
+      <div id="new-item-price-preview">
+        <!-- Campos dinámicos según el tipo de categoría -->
+      </div>
+
+      <div>
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">RUTA DE IMAGEN (OPCIONAL)</label>
+        <input type="text" id="new-item-img" class="input-field" placeholder="img/ejemplo.jpeg">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+        <button type="button" class="btn btn-ghost" onclick="cerrarModalCreacion()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="guardarNuevoItemDesdeModal()">Añadir al Menú</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-pill" id="sync-toast">✅ Menú publicado correctamente</div>
 
   <script>
     const ADMIN_PIN = "231721";
     const NPOINT_URL = "https://api.npoint.io/3b2ace171723868f5708";
 
     let menuData = [];
-    let categoriaActiva = "todas";
+    let categoriaSeleccionada = "todas";
 
-    function verificarSesion() {
-      const estaAutenticado = sessionStorage.getItem('chippys_admin_auth') === 'true';
-      const tienePin = Boolean(sessionStorage.getItem('chippys_admin_pin'));
+    // Sesión
+    function inicializarSeguridad() {
+      const auth = sessionStorage.getItem('chippys_admin_auth') === 'true';
+      const pin = sessionStorage.getItem('chippys_admin_pin');
 
-      if (estaAutenticado && tienePin) {
-        document.getElementById('login-modal').style.display = 'none';
-        cargarDesdeNpoint();
+      if (auth && pin === ADMIN_PIN) {
+        document.getElementById('lock-screen').style.display = 'none';
+        cargarDatosCatalogo();
       } else {
-        sessionStorage.removeItem('chippys_admin_auth');
-        sessionStorage.removeItem('chippys_admin_pin');
-        document.getElementById('login-modal').style.display = 'flex';
+        sessionStorage.clear();
+        document.getElementById('lock-screen').style.display = 'flex';
       }
     }
 
-    function validarPIN(e) {
+    function handleAuth(e) {
       e.preventDefault();
-      const input = document.getElementById('admin-pin-field').value;
-      if (input === ADMIN_PIN) {
+      const val = document.getElementById('auth-input').value.trim();
+      if (val === ADMIN_PIN) {
         sessionStorage.setItem('chippys_admin_auth', 'true');
-        sessionStorage.setItem('chippys_admin_pin', input);
-        document.getElementById('login-modal').style.display = 'none';
-        cargarDesdeNpoint();
+        sessionStorage.setItem('chippys_admin_pin', val);
+        document.getElementById('lock-screen').style.display = 'none';
+        cargarDatosCatalogo();
       } else {
         alert("PIN incorrecto");
-        document.getElementById('admin-pin-field').value = '';
+        document.getElementById('auth-input').value = '';
       }
     }
 
     function cerrarSesion() {
-      sessionStorage.removeItem('chippys_admin_auth');
-      sessionStorage.removeItem('chippys_admin_pin');
+      sessionStorage.clear();
       location.reload();
     }
 
-    async function cargarDesdeNpoint() {
-      const container = document.getElementById('admin-container');
+    // Carga de Datos
+    async function cargarDatosCatalogo() {
+      const container = document.getElementById('content-container');
       try {
         const res = await fetch(`${NPOINT_URL}?t=${Date.now()}`);
-        if (!res.ok) throw new Error("Error de conexión");
+        if (!res.ok) throw new Error("No se pudo obtener la información");
         menuData = await res.json();
-        renderTabs();
-        renderAdmin();
+        renderizarPestanas();
+        renderizarListaProductos();
       } catch (err) {
         container.innerHTML = `
-          <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 20px; border-radius: 8px; text-align:center;">
-            <b>Error de conexión:</b> No se pudo cargar la carta.
+          <div style="background:var(--danger-bg); border:1px solid var(--danger); padding:20px; border-radius:var(--radius-md); text-align:center;">
+            <b>Error de sincronización:</b> No se pudieron obtener los datos de la carta.
           </div>
         `;
       }
     }
 
-    function renderTabs() {
-      const tabs = document.getElementById('category-tabs');
-      tabs.innerHTML = `
-        <button class="tab-btn ${categoriaActiva === 'todas' ? 'active' : ''}" onclick="cambiarFiltro('todas')">
-          🌟 Ver Todos
+    function renderizarPestanas() {
+      const tabsBox = document.getElementById('tabs-container');
+      tabsBox.innerHTML = `
+        <button type="button" class="nav-tab ${categoriaSeleccionada === 'todas' ? 'active' : ''}" onclick="seleccionarCategoria('todas')">
+          🌟 Todas las Categorías
         </button>
       `;
 
       menuData.forEach(cat => {
-        tabs.innerHTML += `
-          <button class="tab-btn ${categoriaActiva === cat.id ? 'active' : ''}" onclick="cambiarFiltro('${cat.id}')">
+        tabsBox.innerHTML += `
+          <button type="button" class="nav-tab ${categoriaSeleccionada === cat.id ? 'active' : ''}" onclick="seleccionarCategoria('${cat.id}')">
             ${cat.icono} ${cat.categoria}
           </button>
         `;
       });
     }
 
-    function cambiarFiltro(catId) {
-      categoriaActiva = catId;
-      renderTabs();
-      renderAdmin();
+    function seleccionarCategoria(id) {
+      categoriaSeleccionada = id;
+      renderizarPestanas();
+      renderizarListaProductos();
     }
 
-    function filtrarProductos() {
-      renderAdmin();
+    function filtrarEnPantalla() {
+      renderizarListaProductos();
     }
 
-    function obtenerProducto(prodId) {
+    // Funciones seguras de mutación por ID
+    function buscarProducto(id) {
       for (const cat of menuData) {
-        const p = cat.productos.find(item => item.id == prodId);
-        if (p) return p;
+        const item = cat.productos.find(p => p.id == id);
+        if (item) return item;
       }
       return null;
     }
 
-    function actualizarNombre(prodId, valor) {
-      const p = obtenerProducto(prodId);
-      if (p) p.nombre = valor;
+    function mutarTexto(id, campo, val) {
+      const p = buscarProducto(id);
+      if (p) p[campo] = val;
     }
 
-    function actualizarPrecio(prodId, valor) {
-      const p = obtenerProducto(prodId);
-      if (p) p.precio = Number(valor);
+    function mutarPrecioUnico(id, val) {
+      const p = buscarProducto(id);
+      if (p) p.precio = Number(val);
     }
 
-    function actualizarDesc(prodId, valor) {
-      const p = obtenerProducto(prodId);
-      if (p) p.desc = valor;
-    }
-
-    function actualizarImg(prodId, valor) {
-      const p = obtenerProducto(prodId);
-      if (p) p.img = valor;
-    }
-
-    function actualizarVarianteTipo(prodId, vIdx, valor) {
-      const p = obtenerProducto(prodId);
-      if (p && p.variantes && p.variantes[vIdx]) p.variantes[vIdx].tipo = valor;
-    }
-
-    function actualizarVariantePrecio(prodId, vIdx, valor) {
-      const p = obtenerProducto(prodId);
-      if (p && p.variantes && p.variantes[vIdx]) p.variantes[vIdx].precio = Number(valor);
-    }
-
-    function actualizarCarne(prodId, cIdx, valor) {
-      const p = obtenerProducto(prodId);
-      if (p && p.carnes && p.carnes[cIdx]) {
-        p.carnes[cIdx].precio = Number(valor);
+    function mutarVariante(id, vIdx, campo, val) {
+      const p = buscarProducto(id);
+      if (p && p.variantes && p.variantes[vIdx]) {
+        p.variantes[vIdx][campo] = campo === 'precio' ? Number(val) : val;
       }
     }
 
-    // Cambiar dinámicamente estructura entre precio fijo y multiprecio
-    function cambiarEsquemaPrecio(prodId, nuevoEsquema) {
-      const p = obtenerProducto(prodId);
+    function mutarCarne(id, cIdx, val) {
+      const p = buscarProducto(id);
+      if (p && p.carnes && p.carnes[cIdx]) {
+        p.carnes[cIdx].precio = Number(val);
+      }
+    }
+
+    function cambiarEsquema(id, esquema) {
+      const p = buscarProducto(id);
       if (!p) return;
 
-      if (nuevoEsquema === 'carnes') {
+      if (esquema === 'carnes') {
         delete p.precio;
         delete p.variantes;
         p.carnes = [
@@ -513,75 +444,107 @@
           { tipo: "Churrasco", precio: 4490 },
           { tipo: "Mechada", precio: 5290 }
         ];
-      } else if (nuevoEsquema === 'variantes') {
+      } else if (esquema === 'variantes') {
         delete p.precio;
         delete p.carnes;
         p.variantes = [
-          { tipo: "Normal", precio: 3500 },
-          { tipo: "Grande", precio: 4900 }
+          { tipo: "Normal", precio: 2990 },
+          { tipo: "Grande", precio: 3990 }
         ];
       } else {
         delete p.carnes;
         delete p.variantes;
         p.precio = 5000;
       }
-      renderAdmin();
+      renderizarListaProductos();
     }
 
-    function renderAdmin() {
-      const container = document.getElementById('admin-container');
-      const busqueda = document.getElementById('search-box').value.toLowerCase().trim();
+    function eliminarItem(id) {
+      const p = buscarProducto(id);
+      if (p && confirm(`¿Deseas eliminar permanentemente "${p.nombre}"?`)) {
+        for (const cat of menuData) {
+          const idx = cat.productos.findIndex(item => item.id == id);
+          if (idx !== -1) {
+            cat.productos.splice(idx, 1);
+            break;
+          }
+        }
+        renderizarListaProductos();
+      }
+    }
+
+    function agregarTamanoVariante(id) {
+      const p = buscarProducto(id);
+      if (p) {
+        if (!p.variantes) p.variantes = [];
+        p.variantes.push({ tipo: "1 Kilo", precio: 6990 });
+        renderizarListaProductos();
+      }
+    }
+
+    function borrarTamanoVariante(id, vIdx) {
+      const p = buscarProducto(id);
+      if (p && p.variantes) {
+        p.variantes.splice(vIdx, 1);
+        renderizarListaProductos();
+      }
+    }
+
+    // Render del Catálogo
+    function renderizarListaProductos() {
+      const container = document.getElementById('content-container');
+      const search = document.getElementById('quick-search').value.toLowerCase().trim();
       container.innerHTML = '';
 
-      let totalCoincidencias = 0;
+      let totalVisibles = 0;
 
-      menuData.forEach((cat) => {
-        if (categoriaActiva !== 'todas' && cat.id !== categoriaActiva) return;
+      menuData.forEach(cat => {
+        if (categoriaSeleccionada !== 'todas' && cat.id !== categoriaSeleccionada) return;
 
         let prodsHtml = '';
-        let productosFiltrados = 0;
+        let countCat = 0;
 
-        cat.productos.forEach((p) => {
-          const coincide = p.nombre.toLowerCase().includes(busqueda) || (p.desc && p.desc.toLowerCase().includes(busqueda));
-          if (!coincide) return;
+        cat.productos.forEach(p => {
+          const match = p.nombre.toLowerCase().includes(search) || (p.desc && p.desc.toLowerCase().includes(search));
+          if (!match) return;
 
-          productosFiltrados++;
-          totalCoincidencias++;
+          countCat++;
+          totalVisibles++;
 
-          let extraHtml = '';
-          const esquemaActual = p.carnes ? 'carnes' : (p.variantes ? 'variantes' : 'fijo');
+          let multiprecioHtml = '';
+          const esquema = p.carnes ? 'carnes' : (p.variantes ? 'variantes' : 'fijo');
 
           if (p.variantes) {
-            extraHtml = `
-              <div class="variant-box">
-                <div class="variant-head">
-                  <span class="variant-title">📏 Tamaños / Porciones Multiprecio</span>
-                  <button class="btn-sub" onclick="agregarVariante(${p.id})">+ Añadir Tamaño</button>
+            multiprecioHtml = `
+              <div class="multiprice-wrapper">
+                <div class="multiprice-header">
+                  <span>Porciones / Tamaños Multiprecio</span>
+                  <button type="button" class="btn btn-ghost" style="padding:4px 8px; font-size:0.75rem;" onclick="agregarTamanoVariante(${p.id})">+ Agregar Formato</button>
                 </div>
                 ${p.variantes.map((v, vIdx) => `
-                  <div class="variant-row">
-                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Ej: Mediana, 1 Kilo..." oninput="actualizarVarianteTipo(${p.id}, ${vIdx}, this.value)">
-                    <div class="price-input-wrap">
+                  <div class="variant-line">
+                    <input type="text" class="input-field" value="${v.tipo}" placeholder="Nombre tamaño" oninput="mutarVariante(${p.id}, ${vIdx}, 'tipo', this.value)">
+                    <div class="price-badge-box">
                       <span>$</span>
-                      <input type="number" value="${v.precio}" oninput="actualizarVariantePrecio(${p.id}, ${vIdx}, this.value)">
+                      <input type="number" value="${v.precio}" oninput="mutarVariante(${p.id}, ${vIdx}, 'precio', this.value)">
                     </div>
-                    <button class="btn-sub btn-del" onclick="eliminarVariante(${p.id}, ${vIdx})">✕</button>
+                    <button type="button" class="btn btn-danger-ghost" style="padding:0; height:36px;" onclick="borrarTamanoVariante(${p.id}, ${vIdx})">✕</button>
                   </div>
                 `).join('')}
               </div>
             `;
           } else if (p.carnes) {
-            extraHtml = `
-              <div class="variant-box">
-                <div class="variant-head">
-                  <span class="variant-title">🥩 Multiprecio por Proteína</span>
+            multiprecioHtml = `
+              <div class="multiprice-wrapper">
+                <div class="multiprice-header">
+                  <span>Precios por Tipo de Carne</span>
                 </div>
                 ${p.carnes.map((c, carIdx) => `
-                  <div class="variant-row" style="grid-template-columns: 1fr 115px;">
-                    <input type="text" class="input-clean" value="${c.tipo}" disabled style="opacity:0.75; font-weight:600;">
-                    <div class="price-input-wrap">
+                  <div class="variant-line" style="grid-template-columns: 1fr 140px;">
+                    <input type="text" class="input-field" value="${c.tipo}" disabled style="opacity:0.6; font-weight:700;">
+                    <div class="price-badge-box">
                       <span>$</span>
-                      <input type="number" value="${c.precio}" oninput="actualizarCarne(${p.id}, ${carIdx}, this.value)">
+                      <input type="number" value="${c.precio}" oninput="mutarCarne(${p.id}, ${carIdx}, this.value)">
                     </div>
                   </div>
                 `).join('')}
@@ -590,180 +553,190 @@
           }
 
           prodsHtml += `
-            <div class="prod-card">
-              <div class="grid-header">
-                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre del producto" oninput="actualizarNombre(${p.id}, this.value)">
+            <div class="product-row">
+              <div class="prod-main-grid">
+                <input type="text" class="input-field" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre del producto" oninput="mutarTexto(${p.id}, 'nombre', this.value)">
                 ${p.precio !== undefined ? `
-                  <div class="price-input-wrap">
+                  <div class="price-badge-box">
                     <span>$</span>
-                    <input type="number" value="${p.precio}" oninput="actualizarPrecio(${p.id}, this.value)">
+                    <input type="number" value="${p.precio}" oninput="mutarPrecioUnico(${p.id}, this.value)">
                   </div>
-                ` : '<div style="font-size:0.75rem; color:var(--accent-orange); font-weight:700;">(Multiprecio Activo)</div>'}
+                ` : `<div style="font-size:0.8rem; font-weight:700; color:var(--brand-orange); text-align:right;">(Multiprecio Activo)</div>`}
               </div>
 
-              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción..." oninput="actualizarDesc(${p.id}, this.value)">${p.desc || ''}</textarea>
-              
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Ruta foto (ej: img/producto.jpeg)" oninput="actualizarImg(${p.id}, this.value)">
+              <textarea class="input-field" style="resize:vertical; height:45px;" placeholder="Descripción e ingredientes..." oninput="mutarTexto(${p.id}, 'desc', this.value)">${p.desc || ''}</textarea>
+
+              <div class="prod-footer-row">
+                <input type="text" class="input-field" style="max-width:300px; font-size:0.78rem;" value="${p.img || ''}" placeholder="Ruta imagen: img/foto.jpeg" oninput="mutarTexto(${p.id}, 'img', this.value)">
                 
-                <div class="type-switcher">
-                  <span>Esquema:</span>
-                  <select onchange="cambiarEsquemaPrecio(${p.id}, this.value)">
-                    <option value="fijo" ${esquemaActual === 'fijo' ? 'selected' : ''}>Precio Único</option>
-                    <option value="variantes" ${esquemaActual === 'variantes' ? 'selected' : ''}>Tamaños (Normal/Grande)</option>
-                    <option value="carnes" ${esquemaActual === 'carnes' ? 'selected' : ''}>Proteínas (Lomito/Churrasco/Mechada)</option>
-                  </select>
-                  <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="scheme-badge">
+                    <span>Tipo:</span>
+                    <select onchange="cambiarEsquema(${p.id}, this.value)">
+                      <option value="fijo" ${esquema === 'fijo' ? 'selected' : ''}>Precio Único</option>
+                      <option value="variantes" ${esquema === 'variantes' ? 'selected' : ''}>Porciones/Tamaños</option>
+                      <option value="carnes" ${esquema === 'carnes' ? 'selected' : ''}>Matriz de Carnes</option>
+                    </select>
+                  </div>
+                  <button type="button" class="btn btn-danger-ghost" style="padding:6px 12px;" onclick="eliminarItem(${p.id})">Eliminar</button>
                 </div>
               </div>
 
-              ${extraHtml}
+              ${multiprecioHtml}
             </div>
           `;
         });
 
-        if (productosFiltrados > 0 || busqueda === '') {
+        if (countCat > 0 || search === '') {
           container.innerHTML += `
-            <div class="cat-block">
-              <div class="cat-header">
-                <div class="cat-label">
+            <section class="category-group">
+              <div class="category-group-header">
+                <div class="category-group-title">
                   <span>${cat.icono}</span>
                   <span>${cat.categoria}</span>
                 </div>
-                <div class="cat-badge">${cat.productos.length} ítems</div>
+                <span class="category-count">${cat.productos.length} ítems</span>
               </div>
-              ${prodsHtml}
-              <div style="padding: 12px 18px 16px;">
-                <button class="btn-add-prod" onclick="crearProductoInteligente('${cat.id}')">
-                  + Crear Nuevo Ítem en ${cat.categoria}
+              <div>${prodsHtml}</div>
+              <div style="padding: 14px 20px; background: rgba(0,0,0,0.15);">
+                <button type="button" class="btn btn-ghost" style="width:100%; border-style:dashed; border-color:var(--brand-accent); color:var(--brand-accent);" onclick="abrirModalCreacion('${cat.id}')">
+                  + Crear Nuevo Producto en ${cat.categoria}
                 </button>
               </div>
-            </div>
+            </section>
           `;
         }
       });
 
-      if (totalCoincidencias === 0 && busqueda !== '') {
-        container.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--muted);">No se encontraron productos para "${busqueda}".</div>`;
+      if (totalVisibles === 0 && search !== '') {
+        container.innerHTML = `<div style="text-align:center; padding: 50px; color:var(--text-muted);">No se encontraron productos coincidentes.</div>`;
       }
     }
 
-    // Creador inteligente según el tipo de categoría
-    function crearProductoInteligente(catId) {
+    // Modal Controlado de Creación
+    function abrirModalCreacion(catId) {
       const cat = menuData.find(c => c.id === catId);
       if (!cat) return;
 
-      const nuevoId = Date.now();
-      let nuevoProd = {
-        id: nuevoId,
-        nombre: "Nuevo Ítem",
-        desc: "Descripción de ingredientes...",
-        img: ""
+      document.getElementById('new-item-cat-id').value = catId;
+      document.getElementById('create-modal-cat-name').innerText = `Nuevo Producto en ${cat.categoria}`;
+      document.getElementById('new-item-name').value = '';
+      document.getElementById('new-item-desc').value = '';
+      document.getElementById('new-item-img').value = '';
+
+      const previewBox = document.getElementById('new-item-price-preview');
+
+      if (catId === 'sandwiches') {
+        previewBox.innerHTML = `
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">PRECIOS POR CARNE</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            <input type="number" id="new-p-lomito" class="input-field" placeholder="Lomito $" value="3990">
+            <input type="number" id="new-p-churrasco" class="input-field" placeholder="Churrasco $" value="4490">
+            <input type="number" id="new-p-mechada" class="input-field" placeholder="Mechada $" value="5290">
+          </div>
+        `;
+      } else if (catId === 'vienesas' || catId === 'as') {
+        previewBox.innerHTML = `
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">PRECIOS POR FORMATO</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <input type="number" id="new-p-normal" class="input-field" placeholder="Normal $" value="2990">
+            <input type="number" id="new-p-grande" class="input-field" placeholder="Grande $" value="3990">
+          </div>
+        `;
+      } else if (catId === 'papas') {
+        previewBox.innerHTML = `
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">PRECIOS POR FORMATO</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <input type="number" id="new-p-mediana" class="input-field" placeholder="Mediana $" value="4990">
+            <input type="number" id="new-p-l" class="input-field" placeholder="L $" value="6490">
+          </div>
+        `;
+      } else {
+        previewBox.innerHTML = `
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">PRECIO ($)</label>
+          <input type="number" id="new-p-fijo" class="input-field" placeholder="Ej: 6990" value="6990">
+        `;
+      }
+
+      document.getElementById('create-modal').classList.add('active');
+    }
+
+    function cerrarModalCreacion() {
+      document.getElementById('create-modal').classList.remove('active');
+    }
+
+    function guardarNuevoItemDesdeModal() {
+      const catId = document.getElementById('new-item-cat-id').value;
+      const cat = menuData.find(c => c.id === catId);
+      if (!cat) return;
+
+      const nombre = document.getElementById('new-item-name').value.trim() || 'Nuevo Producto';
+      const desc = document.getElementById('new-item-desc').value.trim();
+      const img = document.getElementById('new-item-img').value.trim();
+
+      let nuevoItem = {
+        id: Date.now(),
+        nombre: nombre,
+        desc: desc,
+        img: img
       };
 
       if (catId === 'sandwiches') {
-        // Matriz de 3 carnes
-        nuevoProd.carnes = [
-          { tipo: "Lomito", precio: 3990 },
-          { tipo: "Churrasco", precio: 4490 },
-          { tipo: "Mechada", precio: 5290 }
+        nuevoItem.carnes = [
+          { tipo: "Lomito", precio: Number(document.getElementById('new-p-lomito').value) || 3990 },
+          { tipo: "Churrasco", precio: Number(document.getElementById('new-p-churrasco').value) || 4490 },
+          { tipo: "Mechada", precio: Number(document.getElementById('new-p-mechada').value) || 5290 }
         ];
       } else if (catId === 'vienesas' || catId === 'as') {
-        // Tamaños Normal y Grande
-        nuevoProd.variantes = [
-          { tipo: "Normal", precio: 2990 },
-          { tipo: "Grande", precio: 3990 }
+        nuevoItem.variantes = [
+          { tipo: "Normal", precio: Number(document.getElementById('new-p-normal').value) || 2990 },
+          { tipo: "Grande", precio: Number(document.getElementById('new-p-grande').value) || 3990 }
         ];
       } else if (catId === 'papas') {
-        // Formatos de papas
-        nuevoProd.variantes = [
-          { tipo: "Mediana", precio: 4990 },
-          { tipo: "L", precio: 6490 }
+        nuevoItem.variantes = [
+          { tipo: "Mediana", precio: Number(document.getElementById('new-p-mediana').value) || 4990 },
+          { tipo: "L", precio: Number(document.getElementById('new-p-l').value) || 6490 }
         ];
       } else {
-        // Precio único para smash, bebidas, promos, etc.
-        nuevoProd.precio = 6990;
+        nuevoItem.precio = Number(document.getElementById('new-p-fijo').value) || 6990;
       }
 
-      cat.productos.push(nuevoProd);
-      renderAdmin();
-
-      // Scroll automático al nuevo producto
-      setTimeout(() => {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-      }, 100);
+      cat.productos.push(nuevoItem);
+      cerrarModalCreacion();
+      renderizarListaProductos();
     }
 
-    function agregarVariante(prodId) {
-      const p = obtenerProducto(prodId);
-      if (p) {
-        if (!p.variantes) p.variantes = [];
-        p.variantes.push({ tipo: "Nuevo Tamaño", precio: 0 });
-        renderAdmin();
-      }
-    }
-
-    function eliminarVariante(prodId, vIdx) {
-      const p = obtenerProducto(prodId);
-      if (p && p.variantes) {
-        p.variantes.splice(vIdx, 1);
-        renderAdmin();
-      }
-    }
-
-    function eliminarProducto(prodId) {
-      const p = obtenerProducto(prodId);
-      if (p && confirm(`¿Seguro que deseas eliminar "${p.nombre}"?`)) {
-        for (const cat of menuData) {
-          const idx = cat.productos.findIndex(item => item.id == prodId);
-          if (idx !== -1) {
-            cat.productos.splice(idx, 1);
-            break;
-          }
-        }
-        renderAdmin();
-      }
-    }
-
-    async function guardarEnServidor() {
-      const btn = document.querySelector('.btn-save');
+    // Persistencia con Vercel API
+    async function persistirDatosServidor() {
+      const btn = document.querySelector('.btn-publish');
       const originalText = btn.innerHTML;
-      btn.innerHTML = `<span>⏳</span> Publicando...`;
+      btn.innerHTML = `<span>⏳</span> Guardando...`;
       btn.disabled = true;
 
-      const pinSesion = sessionStorage.getItem('chippys_admin_pin') || '';
+      const pin = sessionStorage.getItem('chippys_admin_pin') || '';
 
       try {
         const res = await fetch('/api/guardar', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            pin: pinSesion,
-            menuData: menuData
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin: pin, menuData: menuData })
         });
 
-        const resultado = await res.json();
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error al persistir');
 
-        if (!res.ok) {
-          throw new Error(resultado.error || 'Error en el servidor');
-        }
-
-        const toast = document.getElementById('toast-msg');
+        const toast = document.getElementById('sync-toast');
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, 3000);
-      } catch (e) {
-        console.error("Error al publicar:", e);
-        alert(`No se pudo publicar el menú:\n${e.message}`);
+      } catch (err) {
+        alert(`No se pudo publicar el catálogo:\n${err.message}`);
       } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
       }
     }
 
-    verificarSesion();
+    inicializarSeguridad();
   </script>
 </body>
 </html>
