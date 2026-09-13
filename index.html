@@ -1804,15 +1804,22 @@
     }
 
     // Inicializar cargando el archivo menu.json
+    // ==========================================
+    // CONEXIÓN CON NPOINT.IO
+    // ==========================================
+    const NPOINT_URL = "https://api.npoint.io/33c38c46118d1ae5d317";
+
     async function inicializarApp() {
       try {
-        const res = await fetch('menu.json');
-        menuData = await res.json();
-        renderMenu();
-        actualizarUI();
+        const res = await fetch(NPOINT_URL);
+        if (res.ok) {
+          menuData = await res.json();
+        }
       } catch (e) {
-        console.error("Error al cargar la base de datos:", e);
+        console.warn("Cargando carta desde respaldo local...");
       }
+      renderMenu();
+      actualizarUI();
       comprobarHorario();
       setInterval(comprobarHorario, 60000);
     }
