@@ -557,36 +557,43 @@
     }
 
     async function guardarEnNpoint() {
-      const btn = document.querySelector('.btn-save');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `<span>⏳</span> Guardando...`;
-      btn.disabled = true;
+  const btn = document.querySelector('.btn-save');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<span>⏳</span> Guardando...`;
+  btn.disabled = true;
 
-      try {
-        const res = await fetch(NPOINT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(menuData)
-        });
+  // Recuperar el PIN ingresado al iniciar sesión
+  const pinSesion = sessionStorage.getItem('chippys_admin_pin') || '';
 
-        if (!res.ok) {
-          const errorDetalle = await res.text();
-          throw new Error(`Código ${res.status}: ${errorDetalle}`);
-        }
+  try {
+    const res = await fetch('/api/guardar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        pin: pinSesion,
+        menuData: menuData
+      })
+    });
 
-        const toast = document.getElementById('toast-msg');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
-      } catch (e) {
-        console.error("Error al guardar:", e);
-        alert(`Error al sincronizar con npoint.io:\n${e.message}\n\nAbre la consola (F12) para más detalles.`);
-      } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }
+    const resultado = await res.json();
+
+    if (!res.ok) {
+      throw new Error(resultado.error || 'Error al guardar');
     }
+
+    const toast = document.getElementById('toast-msg');
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  } catch (e) {
+    console.error("Error al guardar:", e);
+    alert(`No se pudo publicar el menú:\n${e.message}`);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
 
     verificarSesion();
   </script>
