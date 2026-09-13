@@ -341,16 +341,12 @@
   <div class="toast-msg" id="toast-msg">✅ ¡Cambios publicados y sincronizados con el menú!</div>
 
   <script>
-    // ==========================================
-    // CONFIGURACIÓN DE SEGURIDAD Y NPOINT
-    // ==========================================
     const ADMIN_PIN = "231721";
     const NPOINT_URL = "https://api.npoint.io/3b2ace171723868f5708";
 
     let menuData = [];
     let categoriaActiva = "todas";
 
-    // Validar contraseña y sesión activa
     function verificarSesion() {
       const estaAutenticado = sessionStorage.getItem('chippys_admin_auth') === 'true';
       const tienePin = Boolean(sessionStorage.getItem('chippys_admin_pin'));
@@ -388,7 +384,6 @@
     async function cargarDesdeNpoint() {
       const container = document.getElementById('admin-container');
       try {
-        // Añadido timestamp para evitar que el navegador guarde en caché el JSON viejo
         const res = await fetch(`${NPOINT_URL}?t=${Date.now()}`);
         if (!res.ok) throw new Error("Error de conexión");
         menuData = await res.json();
@@ -430,7 +425,7 @@
       renderAdmin();
     }
 
-    // Funciones auxiliares para actualizar por ID seguro
+    // Funciones auxiliares sin conflictos de comillas
     function obtenerProducto(prodId) {
       for (const cat of menuData) {
         const p = cat.productos.find(item => item.id == prodId);
@@ -439,18 +434,34 @@
       return null;
     }
 
-    function actualizarCampo(prodId, campo, valor) {
+    function actualizarNombre(prodId, valor) {
       const p = obtenerProducto(prodId);
-      if (p) {
-        p[campo] = (campo === 'precio') ? Number(valor) : valor;
-      }
+      if (p) p.nombre = valor;
     }
 
-    function actualizarVariante(prodId, vIdx, campo, valor) {
+    function actualizarPrecio(prodId, valor) {
       const p = obtenerProducto(prodId);
-      if (p && p.variantes && p.variantes[vIdx]) {
-        p.variantes[vIdx][campo] = (campo === 'precio') ? Number(valor) : valor;
-      }
+      if (p) p.precio = Number(valor);
+    }
+
+    function actualizarDesc(prodId, valor) {
+      const p = obtenerProducto(prodId);
+      if (p) p.desc = valor;
+    }
+
+    function actualizarImg(prodId, valor) {
+      const p = obtenerProducto(prodId);
+      if (p) p.img = valor;
+    }
+
+    function actualizarVarianteTipo(prodId, vIdx, valor) {
+      const p = obtenerProducto(prodId);
+      if (p && p.variantes && p.variantes[vIdx]) p.variantes[vIdx].tipo = valor;
+    }
+
+    function actualizarVariantePrecio(prodId, vIdx, valor) {
+      const p = obtenerProducto(prodId);
+      if (p && p.variantes && p.variantes[vIdx]) p.variantes[vIdx].precio = Number(valor);
     }
 
     function actualizarCarne(prodId, cIdx, valor) {
@@ -490,10 +501,10 @@
                 </span>
                 ${p.variantes.map((v, vIdx) => `
                   <div class="variant-row">
-                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Tamaño" oninput="actualizarVariante(${p.id}, ${vIdx}, 'tipo', this.value)">
+                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Tamaño" oninput="actualizarVarianteTipo(${p.id}, ${vIdx}, this.value)">
                     <div class="price-input-wrap">
                       <span>$</span>
-                      <input type="number" value="${v.precio}" oninput="actualizarVariante(${p.id}, ${vIdx}, 'precio', this.value)">
+                      <input type="number" value="${v.precio}" oninput="actualizarVariantePrecio(${p.id}, ${vIdx}, this.value)">
                     </div>
                     <button class="btn-sub btn-del" onclick="eliminarVariante(${p.id}, ${vIdx})">✕</button>
                   </div>
@@ -523,19 +534,19 @@
           prodsHtml += `
             <div class="prod-card">
               <div class="grid-row-1">
-                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre producto" oninput="actualizarCampo(${p.id}, 'nombre', this.value)">
+                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre producto" oninput="actualizarNombre(${p.id}, this.value)">
                 ${p.precio !== undefined ? `
                   <div class="price-input-wrap">
                     <span>$</span>
-                    <input type="number" value="${p.precio}" oninput="actualizarCampo(${p.id}, 'precio', this.value)">
+                    <input type="number" value="${p.precio}" oninput="actualizarPrecio(${p.id}, this.value)">
                   </div>
                 ` : '<div style="font-size:0.75rem; color:var(--muted);">(Multi-precio)</div>'}
               </div>
 
-              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción" oninput="actualizarCampo(${p.id}, 'desc', this.value)">${p.desc || ''}</textarea>
+              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción" oninput="actualizarDesc(${p.id}, this.value)">${p.desc || ''}</textarea>
               
               <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Foto (ej: img/producto.jpeg)" oninput="actualizarCampo(${p.id}, 'img', this.value)">
+                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Foto (ej: img/producto.jpeg)" oninput="actualizarImg(${p.id}, this.value)">
                 <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${p.id})">Eliminar</button>
               </div>
 
