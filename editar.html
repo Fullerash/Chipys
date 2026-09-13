@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Administrativo - Chippys</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Chippys Admin - Gestión de Menú</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #121316;
       --card: #1c1d22;
       --card-alt: #25262c;
       --accent: #ffb703;
+      --orange: #fb8500;
       --text: #f8f9fa;
       --muted: #a0a4b0;
       --border: #2e3039;
@@ -18,69 +19,181 @@
       --green: #25d366;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 20px; max-width: 900px; margin: 0 auto; }
-    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
-    h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; color: var(--accent); }
-    .btn-export { background: var(--green); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-    .cat-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 25px; }
-    .cat-header { font-family: 'Montserrat'; font-size: 1.15rem; color: var(--accent); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .prod-item { background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
-    .prod-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 8px; }
-    .input-field { background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; width: 100%; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 80px; }
+    
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 25px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .brand { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 900; color: var(--accent); }
+    .btn-save-cloud {
+      background: linear-gradient(135deg, var(--green) 0%, #1eb956 100%);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+      transition: transform 0.15s;
+    }
+    .btn-save-cloud:active { transform: scale(0.98); }
+
+    .container { max-width: 850px; margin: 25px auto; padding: 0 15px; }
+
+    .cat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+    .cat-title {
+      background: rgba(255, 183, 3, 0.08);
+      padding: 14px 20px;
+      font-family: 'Montserrat';
+      font-weight: 800;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .prod-row {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .prod-row:last-child { border-bottom: none; }
+    
+    .grid-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) { .grid-main { grid-template-columns: 1fr; } }
+
+    .input-field {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      width: 100%;
+    }
     .input-field:focus { border-color: var(--accent); outline: none; }
-    .variants-container { margin-top: 10px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; }
-    .variant-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
-    .btn-small { background: var(--border); color: var(--muted); border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
-    .btn-small:hover { color: #fff; }
-    .btn-del { background: rgba(230,57,70,0.15); color: var(--red); border: 1px solid rgba(230,57,70,0.3); }
-    .btn-add-prod { width: 100%; background: transparent; border: 1px dashed var(--accent); color: var(--accent); padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+
+    .variants-box {
+      background: var(--card-alt);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 5px;
+    }
+    .variant-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .btn-action {
+      background: var(--card-alt);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-action:hover { color: #fff; border-color: var(--muted); }
+    .btn-del { color: var(--red); border-color: rgba(230,57,70,0.3); background: rgba(230,57,70,0.1); }
+    .btn-add-item {
+      width: 100%;
+      background: transparent;
+      border: 1px dashed var(--accent);
+      color: var(--accent);
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: var(--green);
+      color: white;
+      padding: 14px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 200;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <div>
-      <h1>CHIPPYS - Panel de Edición</h1>
-      <p style="font-size: 0.8rem; color: var(--muted);">Modifica tu carta y descarga el archivo <code>menu.json</code> actualizado</p>
+      <div class="brand">CHIPPYS ADMIN</div>
+      <div style="font-size: 0.78rem; color: var(--muted);">Edita productos, precios o tamaños y publica directamente</div>
     </div>
-    <button class="btn-export" onclick="exportarJSON()">💾 Descargar menu.json</button>
+    <button class="btn-save-cloud" onclick="guardarEnNpoint()">
+      🚀 Guardar y Publicar
+    </button>
   </header>
 
-  <div id="editor-container">Cargando menú...</div>
+  <main class="container" id="admin-container">
+    <div style="text-align:center; padding: 40px; color: var(--muted);">Cargando la carta desde la nube...</div>
+  </main>
+
+  <div class="toast" id="toast">✅ ¡Menú actualizado y publicado al instante!</div>
 
   <script>
+    const NPOINT_URL = "https://api.npoint.io/33c38c46118d1ae5d317"; 
+
     let menuData = [];
 
-    async function cargarDatos() {
-      const container = document.getElementById('editor-container');
+    async function cargarDesdeNpoint() {
+      const container = document.getElementById('admin-container');
       try {
-        const res = await fetch('./menu.json');
-        
-        if (!res.ok) {
-          throw new Error(`El servidor respondió con código ${res.status} (${res.statusText}). El archivo menu.json no fue encontrado en esta ruta.`);
-        }
-
-        const texto = await res.text();
-        try {
-          menuData = JSON.parse(texto);
-        } catch (jsonErr) {
-          throw new Error(`Error de sintaxis en menu.json: ${jsonErr.message}. Revisa si falta una comilla o sobra una coma.`);
-        }
-
-        renderEditor();
+        const res = await fetch(NPOINT_URL);
+        if (!res.ok) throw new Error("No se pudo conectar a la base de datos");
+        menuData = await res.json();
+        renderAdmin();
       } catch (err) {
         container.innerHTML = `
-          <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 15px; border-radius: 8px;">
-            <p style="color: var(--red); font-weight: 700; margin-bottom: 6px;">⚠️ No se pudo cargar menu.json</p>
-            <p style="font-size: 0.85rem; color: #fff;">${err.message}</p>
+          <div style="background: rgba(230,57,70,0.15); border: 1px solid var(--red); padding: 20px; border-radius: 8px; color: #fff;">
+            <b>Error de conexión:</b> No se pudo cargar el menú desde npoint.io.
           </div>
         `;
-        console.error(err);
       }
     }
 
-    function renderEditor() {
-      const container = document.getElementById('editor-container');
+    function renderAdmin() {
+      const container = document.getElementById('admin-container');
       container.innerHTML = '';
 
       menuData.forEach((cat, cIdx) => {
@@ -91,26 +204,30 @@
 
           if (p.variantes) {
             extraHtml = `
-              <div class="variants-container">
-                <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">Variantes de Tamaño:</span>
+              <div class="variants-box">
+                <span style="font-size:0.75rem; color:var(--accent); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
+                  Porciones / Tamaños:
+                </span>
                 ${p.variantes.map((v, vIdx) => `
                   <div class="variant-row">
-                    <input type="text" class="input-field" value="${v.tipo}" placeholder="Nombre" onchange="actualizarVariante(${cIdx}, ${pIdx}, ${vIdx}, 'tipo', this.value)">
-                    <input type="number" class="input-field" value="${v.precio}" placeholder="Precio" onchange="actualizarVariante(${cIdx}, ${pIdx}, ${vIdx}, 'precio', Number(this.value))">
-                    <button class="btn-small btn-del" onclick="eliminarVariante(${cIdx}, ${pIdx}, ${vIdx})">✕</button>
+                    <input type="text" class="input-field" value="${v.tipo}" placeholder="Nombre tamaño (ej: 1 Kilo)" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].tipo = this.value">
+                    <input type="number" class="input-field" value="${v.precio}" placeholder="Precio $" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].precio = Number(this.value)">
+                    <button class="btn-action btn-del" onclick="eliminarVariante(${cIdx}, ${pIdx}, ${vIdx})">✕</button>
                   </div>
                 `).join('')}
-                <button class="btn-small" onclick="agregarVariante(${cIdx}, ${pIdx})">+ Añadir Tamaño</button>
+                <button class="btn-action" onclick="agregarVariante(${cIdx}, ${pIdx})">+ Añadir Tamaño (Ej: 1 Kilo)</button>
               </div>
             `;
           } else if (p.carnes) {
             extraHtml = `
-              <div class="variants-container">
-                <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">Precios por Proteína:</span>
+              <div class="variants-box">
+                <span style="font-size:0.75rem; color:var(--accent); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">
+                  Precios por Proteína:
+                </span>
                 ${p.carnes.map((c, carIdx) => `
                   <div class="variant-row">
-                    <input type="text" class="input-field" value="${c.tipo}" disabled>
-                    <input type="number" class="input-field" value="${c.precio}" onchange="actualizarCarne(${cIdx}, ${pIdx}, ${carIdx}, Number(this.value))">
+                    <input type="text" class="input-field" value="${c.tipo}" disabled style="opacity:0.7;">
+                    <input type="number" class="input-field" value="${c.precio}" placeholder="Precio $" oninput="menuData[${cIdx}].productos[${pIdx}].carnes[${carIdx}].precio = Number(this.value)">
                   </div>
                 `).join('')}
               </div>
@@ -118,17 +235,17 @@
           }
 
           prodsHtml += `
-            <div class="prod-item">
-              <div class="prod-grid">
-                <input type="text" class="input-field" value="${p.nombre}" placeholder="Nombre del producto" onchange="actualizarProd(${cIdx}, ${pIdx}, 'nombre', this.value)">
+            <div class="prod-row">
+              <div class="grid-main">
+                <input type="text" class="input-field" value="${p.nombre}" placeholder="Nombre del producto" oninput="menuData[${cIdx}].productos[${pIdx}].nombre = this.value">
                 ${p.precio !== undefined ? `
-                  <input type="number" class="input-field" value="${p.precio}" placeholder="Precio $" onchange="actualizarProd(${cIdx}, ${pIdx}, 'precio', Number(this.value))">
-                ` : '<div style="font-size:0.75rem; color:var(--muted); align-self:center;">Precio por Variante</div>'}
+                  <input type="number" class="input-field" value="${p.precio}" placeholder="Precio $" oninput="menuData[${cIdx}].productos[${pIdx}].precio = Number(this.value)">
+                ` : '<div style="font-size:0.8rem; color:var(--muted); align-self:center;">(Precio definido por tamaño)</div>'}
               </div>
-              <textarea class="input-field" style="resize:vertical; height:55px; margin-bottom:5px;" placeholder="Descripción e ingredientes" onchange="actualizarProd(${cIdx}, ${pIdx}, 'desc', this.value)">${p.desc}</textarea>
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <input type="text" class="input-field" style="max-width:300px; font-size:0.75rem;" value="${p.img || ''}" placeholder="Ruta de imagen (ej: img/producto.jpeg)" onchange="actualizarProd(${cIdx}, ${pIdx}, 'img', this.value)">
-                <button class="btn-small btn-del" onclick="eliminarProducto(${cIdx}, ${pIdx})">Eliminar Producto</button>
+              <textarea class="input-field" style="resize:vertical; height:50px;" placeholder="Descripción e ingredientes" oninput="menuData[${cIdx}].productos[${pIdx}].desc = this.value">${p.desc}</textarea>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                <input type="text" class="input-field" style="max-width:320px; font-size:0.75rem;" value="${p.img || ''}" placeholder="Ruta imagen (ej: img/producto.jpeg)" oninput="menuData[${cIdx}].productos[${pIdx}].img = this.value">
+                <button class="btn-action btn-del" onclick="eliminarProducto(${cIdx}, ${pIdx})">Eliminar</button>
               </div>
               ${extraHtml}
             </div>
@@ -136,69 +253,73 @@
         });
 
         container.innerHTML += `
-          <section class="cat-box">
-            <div class="cat-header">
+          <div class="cat-card">
+            <div class="cat-title">
               <span>${cat.icono} ${cat.categoria}</span>
             </div>
             ${prodsHtml}
-            <button class="btn-add-prod" onclick="agregarProducto(${cIdx})">+ Agregar Producto a ${cat.categoria}</button>
-          </section>
+            <div style="padding: 10px 20px 20px;">
+              <button class="btn-add-item" onclick="agregarProducto(${cIdx})">+ Agregar Producto a ${cat.categoria}</button>
+            </div>
+          </div>
         `;
       });
     }
 
-    function actualizarProd(cIdx, pIdx, campo, valor) {
-      menuData[cIdx].productos[pIdx][campo] = valor;
-    }
-
-    function actualizarVariante(cIdx, pIdx, vIdx, campo, valor) {
-      menuData[cIdx].productos[pIdx].variantes[vIdx][campo] = valor;
-    }
-
-    function actualizarCarne(cIdx, pIdx, carIdx, valor) {
-      menuData[cIdx].productos[pIdx].carnes[carIdx].precio = valor;
-    }
-
     function agregarVariante(cIdx, pIdx) {
-      menuData[cIdx].productos[pIdx].variantes.push({ tipo: "Nuevo Tamaño", precio: 0 });
-      renderEditor();
+      menuData[cIdx].productos[pIdx].variantes.push({ tipo: "1 Kilo", precio: 6990 });
+      renderAdmin();
     }
 
     function eliminarVariante(cIdx, pIdx, vIdx) {
       menuData[cIdx].productos[pIdx].variantes.splice(vIdx, 1);
-      renderEditor();
+      renderAdmin();
     }
 
     function agregarProducto(cIdx) {
-      const nuevoId = Date.now();
       menuData[cIdx].productos.push({
-        id: nuevoId,
+        id: Date.now(),
         nombre: "Nuevo Producto",
-        desc: "Ingredientes del producto...",
+        desc: "Descripción de ingredientes...",
         precio: 5000,
         img: ""
       });
-      renderEditor();
+      renderAdmin();
     }
 
     function eliminarProducto(cIdx, pIdx) {
-      if (confirm(`¿Estás seguro de eliminar ${menuData[cIdx].productos[pIdx].nombre}?`)) {
+      if (confirm(`¿Eliminar ${menuData[cIdx].productos[pIdx].nombre}?`)) {
         menuData[cIdx].productos.splice(pIdx, 1);
-        renderEditor();
+        renderAdmin();
       }
     }
 
-    function exportarJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(menuData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "menu.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+    async function guardarEnNpoint() {
+      const btn = document.querySelector('.btn-save-cloud');
+      btn.innerText = "⏳ Guardando...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(NPOINT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(menuData)
+        });
+
+        if (!res.ok) throw new Error("Error al guardar");
+
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+      } catch (e) {
+        alert("Error al guardar en la nube.");
+      } finally {
+        btn.innerText = "🚀 Guardar y Publicar";
+        btn.disabled = false;
+      }
     }
 
-    cargarDatos();
+    cargarDesdeNpoint();
   </script>
 </body>
 </html>
