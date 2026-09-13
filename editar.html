@@ -344,13 +344,13 @@
     // ==========================================
     // CONFIGURACIÓN DE SEGURIDAD Y NPOINT
     // ==========================================
-    const ADMIN_PIN = "231721"; // <-- PIN de acceso local
+    const ADMIN_PIN = "231721";
     const NPOINT_URL = "https://api.npoint.io/3b2ace171723868f5708";
 
     let menuData = [];
     let categoriaActiva = "todas";
 
-    // Validar contraseña y sesión activa de forma segura
+    // Validar contraseña y sesión activa
     function verificarSesion() {
       const estaAutenticado = sessionStorage.getItem('chippys_admin_auth') === 'true';
       const tienePin = Boolean(sessionStorage.getItem('chippys_admin_pin'));
@@ -388,7 +388,8 @@
     async function cargarDesdeNpoint() {
       const container = document.getElementById('admin-container');
       try {
-        const res = await fetch(NPOINT_URL);
+        // Añadido timestamp para evitar que el navegador guarde en caché el JSON viejo
+        const res = await fetch(`${NPOINT_URL}?t=${Date.now()}`);
         if (!res.ok) throw new Error("Error de conexión");
         menuData = await res.json();
         renderTabs();
@@ -429,6 +430,36 @@
       renderAdmin();
     }
 
+    // Funciones auxiliares para actualizar por ID seguro
+    function obtenerProducto(prodId) {
+      for (const cat of menuData) {
+        const p = cat.productos.find(item => item.id == prodId);
+        if (p) return p;
+      }
+      return null;
+    }
+
+    function actualizarCampo(prodId, campo, valor) {
+      const p = obtenerProducto(prodId);
+      if (p) {
+        p[campo] = (campo === 'precio') ? Number(valor) : valor;
+      }
+    }
+
+    function actualizarVariante(prodId, vIdx, campo, valor) {
+      const p = obtenerProducto(prodId);
+      if (p && p.variantes && p.variantes[vIdx]) {
+        p.variantes[vIdx][campo] = (campo === 'precio') ? Number(valor) : valor;
+      }
+    }
+
+    function actualizarCarne(prodId, cIdx, valor) {
+      const p = obtenerProducto(prodId);
+      if (p && p.carnes && p.carnes[cIdx]) {
+        p.carnes[cIdx].precio = Number(valor);
+      }
+    }
+
     function renderAdmin() {
       const container = document.getElementById('admin-container');
       const busqueda = document.getElementById('search-box').value.toLowerCase().trim();
@@ -436,14 +467,14 @@
 
       let totalCoincidencias = 0;
 
-      menuData.forEach((cat, cIdx) => {
+      menuData.forEach((cat) => {
         if (categoriaActiva !== 'todas' && cat.id !== categoriaActiva) return;
 
         let prodsHtml = '';
         let productosFiltrados = 0;
 
-        cat.productos.forEach((p, pIdx) => {
-          const coincideBusqueda = p.nombre.toLowerCase().includes(busqueda) || p.desc.toLowerCase().includes(busqueda);
+        cat.productos.forEach((p) => {
+          const coincideBusqueda = p.nombre.toLowerCase().includes(busqueda) || (p.desc && p.desc.toLowerCase().includes(busqueda));
           if (!coincideBusqueda) return;
 
           productosFiltrados++;
@@ -459,15 +490,15 @@
                 </span>
                 ${p.variantes.map((v, vIdx) => `
                   <div class="variant-row">
-                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Tamaño" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].tipo = this.value">
+                    <input type="text" class="input-clean" value="${v.tipo}" placeholder="Tamaño" oninput="actualizarVariante(${p.id}, ${vIdx}, 'tipo', this.value)">
                     <div class="price-input-wrap">
                       <span>$</span>
-                      <input type="number" value="${v.precio}" oninput="menuData[${cIdx}].productos[${pIdx}].variantes[${vIdx}].precio = Number(this.value)">
+                      <input type="number" value="${v.precio}" oninput="actualizarVariante(${p.id}, ${vIdx}, 'precio', this.value)">
                     </div>
-                    <button class="btn-sub btn-del" onclick="eliminarVariante(${cIdx}, ${pIdx}, ${vIdx})">✕</button>
+                    <button class="btn-sub btn-del" onclick="eliminarVariante(${p.id}, ${vIdx})">✕</button>
                   </div>
                 `).join('')}
-                <button class="btn-sub" style="margin-top:4px;" onclick="agregarVariante(${cIdx}, ${pIdx})">+ Añadir Tamaño</button>
+                <button class="btn-sub" style="margin-top:4px;" onclick="agregarVariante(${p.id})">+ Añadir Tamaño</button>
               </div>
             `;
           } else if (p.carnes) {
@@ -481,7 +512,7 @@
                     <input type="text" class="input-clean" value="${c.tipo}" disabled style="opacity:0.65;">
                     <div class="price-input-wrap">
                       <span>$</span>
-                      <input type="number" value="${c.precio}" oninput="menuData[${cIdx}].productos[${pIdx}].carnes[${carIdx}].precio = Number(this.value)">
+                      <input type="number" value="${c.precio}" oninput="actualizarCarne(${p.id}, ${carIdx}, this.value)">
                     </div>
                   </div>
                 `).join('')}
@@ -492,20 +523,20 @@
           prodsHtml += `
             <div class="prod-card">
               <div class="grid-row-1">
-                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre producto" oninput="menuData[${cIdx}].productos[${pIdx}].nombre = this.value">
+                <input type="text" class="input-clean" style="font-weight:700;" value="${p.nombre}" placeholder="Nombre producto" oninput="actualizarCampo(${p.id}, 'nombre', this.value)">
                 ${p.precio !== undefined ? `
                   <div class="price-input-wrap">
                     <span>$</span>
-                    <input type="number" value="${p.precio}" oninput="menuData[${cIdx}].productos[${pIdx}].precio = Number(this.value)">
+                    <input type="number" value="${p.precio}" oninput="actualizarCampo(${p.id}, 'precio', this.value)">
                   </div>
                 ` : '<div style="font-size:0.75rem; color:var(--muted);">(Multi-precio)</div>'}
               </div>
 
-              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción" oninput="menuData[${cIdx}].productos[${pIdx}].desc = this.value">${p.desc}</textarea>
+              <textarea class="input-clean" style="resize:vertical; height:45px;" placeholder="Ingredientes / descripción" oninput="actualizarCampo(${p.id}, 'desc', this.value)">${p.desc || ''}</textarea>
               
               <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Foto (ej: img/producto.jpeg)" oninput="menuData[${cIdx}].productos[${pIdx}].img = this.value">
-                <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${cIdx}, ${pIdx})">Eliminar</button>
+                <input type="text" class="input-clean" style="font-size:0.75rem; max-width:280px;" value="${p.img || ''}" placeholder="Foto (ej: img/producto.jpeg)" oninput="actualizarCampo(${p.id}, 'img', this.value)">
+                <button class="btn-sub btn-del" style="width:auto; padding:5px 12px;" onclick="eliminarProducto(${p.id})">Eliminar</button>
               </div>
 
               ${extraHtml}
@@ -525,7 +556,7 @@
               </div>
               ${prodsHtml}
               <div style="padding: 10px 18px 16px;">
-                <button class="btn-add-prod" onclick="agregarProducto(${cIdx})">+ Agregar nuevo producto a ${cat.categoria}</button>
+                <button class="btn-add-prod" onclick="agregarProducto('${cat.id}')">+ Agregar nuevo producto a ${cat.categoria}</button>
               </div>
             </div>
           `;
@@ -537,30 +568,47 @@
       }
     }
 
-    function agregarVariante(cIdx, pIdx) {
-      menuData[cIdx].productos[pIdx].variantes.push({ tipo: "Nuevo Tamaño", precio: 0 });
-      renderAdmin();
+    function agregarVariante(prodId) {
+      const p = obtenerProducto(prodId);
+      if (p) {
+        if (!p.variantes) p.variantes = [];
+        p.variantes.push({ tipo: "Nuevo Tamaño", precio: 0 });
+        renderAdmin();
+      }
     }
 
-    function eliminarVariante(cIdx, pIdx, vIdx) {
-      menuData[cIdx].productos[pIdx].variantes.splice(vIdx, 1);
-      renderAdmin();
+    function eliminarVariante(prodId, vIdx) {
+      const p = obtenerProducto(prodId);
+      if (p && p.variantes) {
+        p.variantes.splice(vIdx, 1);
+        renderAdmin();
+      }
     }
 
-    function agregarProducto(cIdx) {
-      menuData[cIdx].productos.push({
-        id: Date.now(),
-        nombre: "Nuevo Ítem",
-        desc: "Descripción / ingredientes...",
-        precio: 5000,
-        img: ""
-      });
-      renderAdmin();
+    function agregarProducto(catId) {
+      const cat = menuData.find(c => c.id === catId);
+      if (cat) {
+        cat.productos.push({
+          id: Date.now(),
+          nombre: "Nuevo Ítem",
+          desc: "Descripción / ingredientes...",
+          precio: 5000,
+          img: ""
+        });
+        renderAdmin();
+      }
     }
 
-    function eliminarProducto(cIdx, pIdx) {
-      if (confirm(`¿Eliminar ${menuData[cIdx].productos[pIdx].nombre}?`)) {
-        menuData[cIdx].productos.splice(pIdx, 1);
+    function eliminarProducto(prodId) {
+      const p = obtenerProducto(prodId);
+      if (p && confirm(`¿Eliminar ${p.nombre}?`)) {
+        for (const cat of menuData) {
+          const idx = cat.productos.findIndex(item => item.id == prodId);
+          if (idx !== -1) {
+            cat.productos.splice(idx, 1);
+            break;
+          }
+        }
         renderAdmin();
       }
     }
