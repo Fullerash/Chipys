@@ -344,36 +344,44 @@
     // ==========================================
     // CONFIGURACIÓN DE SEGURIDAD Y NPOINT
     // ==========================================
-    const ADMIN_PIN = "231721"; // <-- Cambia tu PIN o contraseña aquí
+    const ADMIN_PIN = "231721"; // <-- PIN de acceso local
     const NPOINT_URL = "https://api.npoint.io/3b2ace171723868f5708";
 
     let menuData = [];
     let categoriaActiva = "todas";
 
-    // Validar contraseña
+    // Validar contraseña y sesión activa de forma segura
     function verificarSesion() {
-      if (sessionStorage.getItem('chippys_admin_auth') === 'true') {
+      const estaAutenticado = sessionStorage.getItem('chippys_admin_auth') === 'true';
+      const tienePin = Boolean(sessionStorage.getItem('chippys_admin_pin'));
+
+      if (estaAutenticado && tienePin) {
         document.getElementById('login-modal').style.display = 'none';
         cargarDesdeNpoint();
+      } else {
+        sessionStorage.removeItem('chippys_admin_auth');
+        sessionStorage.removeItem('chippys_admin_pin');
+        document.getElementById('login-modal').style.display = 'flex';
       }
     }
 
     function validarPIN(e) {
-  e.preventDefault();
-  const input = document.getElementById('admin-pin-field').value;
-  if (input === ADMIN_PIN) {
-    sessionStorage.setItem('chippys_admin_auth', 'true');
-    sessionStorage.setItem('chippys_admin_pin', input); // <-- Guardar PIN para las peticiones API
-    document.getElementById('login-modal').style.display = 'none';
-    cargarDesdeNpoint();
-  } else {
-    alert("PIN incorrecto");
-    document.getElementById('admin-pin-field').value = '';
-  }
-}
+      e.preventDefault();
+      const input = document.getElementById('admin-pin-field').value;
+      if (input === ADMIN_PIN) {
+        sessionStorage.setItem('chippys_admin_auth', 'true');
+        sessionStorage.setItem('chippys_admin_pin', input);
+        document.getElementById('login-modal').style.display = 'none';
+        cargarDesdeNpoint();
+      } else {
+        alert("PIN incorrecto");
+        document.getElementById('admin-pin-field').value = '';
+      }
+    }
 
     function cerrarSesion() {
       sessionStorage.removeItem('chippys_admin_auth');
+      sessionStorage.removeItem('chippys_admin_pin');
       location.reload();
     }
 
@@ -558,43 +566,42 @@
     }
 
     async function guardarEnNpoint() {
-  const btn = document.querySelector('.btn-save');
-  const originalText = btn.innerHTML;
-  btn.innerHTML = `<span>⏳</span> Guardando...`;
-  btn.disabled = true;
+      const btn = document.querySelector('.btn-save');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span>⏳</span> Guardando...`;
+      btn.disabled = true;
 
-  // Recuperar el PIN ingresado al iniciar sesión
-  const pinSesion = sessionStorage.getItem('chippys_admin_pin') || '';
+      const pinSesion = sessionStorage.getItem('chippys_admin_pin') || '';
 
-  try {
-    const res = await fetch('/api/guardar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        pin: pinSesion,
-        menuData: menuData
-      })
-    });
+      try {
+        const res = await fetch('/api/guardar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            pin: pinSesion,
+            menuData: menuData
+          })
+        });
 
-    const resultado = await res.json();
+        const resultado = await res.json();
 
-    if (!res.ok) {
-      throw new Error(resultado.error || 'Error al guardar');
+        if (!res.ok) {
+          throw new Error(resultado.error || 'Error al guardar');
+        }
+
+        const toast = document.getElementById('toast-msg');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+      } catch (e) {
+        console.error("Error al guardar:", e);
+        alert(`No se pudo publicar el menú:\n${e.message}`);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
     }
-
-    const toast = document.getElementById('toast-msg');
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 3000);
-  } catch (e) {
-    console.error("Error al guardar:", e);
-    alert(`No se pudo publicar el menú:\n${e.message}`);
-  } finally {
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
-}
 
     verificarSesion();
   </script>
