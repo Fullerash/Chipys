@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo - Chippys</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #121316;
+      --card: #1c1d22;
+      --card-alt: #25262c;
+      --accent: #ffb703;
+      --text: #f8f9fa;
+      --muted: #a0a4b0;
+      --border: #2e3039;
+      --red: #e63946;
+      --green: #25d366;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 20px; max-width: 900px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+    h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; color: var(--accent); }
+    .btn-export { background: var(--green); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .cat-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 25px; }
+    .cat-header { font-family: 'Montserrat'; font-size: 1.15rem; color: var(--accent); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .prod-item { background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+    .prod-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 8px; }
+    .input-field { background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; width: 100%; }
+    .input-field:focus { border-color: var(--accent); outline: none; }
+    .variants-container { margin-top: 10px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; }
+    .variant-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
+    .btn-small { background: var(--border); color: var(--muted); border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
+    .btn-small:hover { color: #fff; }
+    .btn-del { background: rgba(230,57,70,0.15); color: var(--red); border: 1px solid rgba(230,57,70,0.3); }
+    .btn-add-prod { width: 100%; background: transparent; border: 1px dashed var(--accent); color: var(--accent); padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>CHIPPYS - Panel de Edición</h1>
+      <p style="font-size: 0.8rem; color: var(--muted);">Modifica tu carta y descarga el archivo <code>menu.json</code> actualizado</p>
+    </div>
+    <button class="btn-export" onclick="exportarJSON()">💾 Descargar menu.json</button>
+  </header>
+
+  <div id="editor-container">Cargando menú...</div>
+
+  <script>
+    let menuData = [];
+
+    async function cargarDatos() {
+      try {
+        const res = await fetch('menu.json');
+        menuData = await res.json();
+        renderEditor();
+      } catch (err) {
+        document.getElementById('editor-container').innerHTML = '<p style="color:red;">Error al cargar menu.json. Verifica que el archivo exista en la misma carpeta.</p>';
+      }
+    }
+
+    function renderEditor() {
+      const container = document.getElementById('editor-container');
+      container.innerHTML = '';
+
+      menuData.forEach((cat, cIdx) => {
+        let prodsHtml = '';
+
+        cat.productos.forEach((p, pIdx) => {
+          let extraHtml = '';
+
+          if (p.variantes) {
+            extraHtml = `
+              <div class="variants-container">
+                <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">Variantes de Tamaño:</span>
+                ${p.variantes.map((v, vIdx) => `
+                  <div class="variant-row">
+                    <input type="text" class="input-field" value="${v.tipo}" placeholder="Nombre" onchange="actualizarVariante(${cIdx}, ${pIdx}, ${vIdx}, 'tipo', this.value)">
+                    <input type="number" class="input-field" value="${v.precio}" placeholder="Precio" onchange="actualizarVariante(${cIdx}, ${pIdx}, ${vIdx}, 'precio', Number(this.value))">
+                    <button class="btn-small btn-del" onclick="eliminarVariante(${cIdx}, ${pIdx}, ${vIdx})">✕</button>
+                  </div>
+                `).join('')}
+                <button class="btn-small" onclick="agregarVariante(${cIdx}, ${pIdx})">+ Añadir Tamaño</button>
+              </div>
+            `;
+          } else if (p.carnes) {
+            extraHtml = `
+              <div class="variants-container">
+                <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">Precios por Proteína:</span>
+                ${p.carnes.map((c, carIdx) => `
+                  <div class="variant-row">
+                    <input type="text" class="input-field" value="${c.tipo}" disabled>
+                    <input type="number" class="input-field" value="${c.precio}" onchange="actualizarCarne(${cIdx}, ${pIdx}, ${carIdx}, Number(this.value))">
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          }
+
+          prodsHtml += `
+            <div class="prod-item">
+              <div class="prod-grid">
+                <input type="text" class="input-field" value="${p.nombre}" placeholder="Nombre del producto" onchange="actualizarProd(${cIdx}, ${pIdx}, 'nombre', this.value)">
+                ${p.precio !== undefined ? `
+                  <input type="number" class="input-field" value="${p.precio}" placeholder="Precio $" onchange="actualizarProd(${cIdx}, ${pIdx}, 'precio', Number(this.value))">
+                ` : '<div style="font-size:0.75rem; color:var(--muted); align-self:center;">Precio por Variante</div>'}
+              </div>
+              <textarea class="input-field" style="resize:vertical; height:55px; margin-bottom:5px;" placeholder="Descripción e ingredientes" onchange="actualizarProd(${cIdx}, ${pIdx}, 'desc', this.value)">${p.desc}</textarea>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <input type="text" class="input-field" style="max-width:300px; font-size:0.75rem;" value="${p.img || ''}" placeholder="Ruta de imagen (ej: img/producto.jpeg)" onchange="actualizarProd(${cIdx}, ${pIdx}, 'img', this.value)">
+                <button class="btn-small btn-del" onclick="eliminarProducto(${cIdx}, ${pIdx})">Eliminar Producto</button>
+              </div>
+              ${extraHtml}
+            </div>
+          `;
+        });
+
+        container.innerHTML += `
+          <section class="cat-box">
+            <div class="cat-header">
+              <span>${cat.icono} ${cat.categoria}</span>
+            </div>
+            ${prodsHtml}
+            <button class="btn-add-prod" onclick="agregarProducto(${cIdx})">+ Agregar Producto a ${cat.categoria}</button>
+          </section>
+        `;
+      });
+    }
+
+    function actualizarProd(cIdx, pIdx, campo, valor) {
+      menuData[cIdx].productos[pIdx][campo] = valor;
+    }
+
+    function actualizarVariante(cIdx, pIdx, vIdx, campo, valor) {
+      menuData[cIdx].productos[pIdx].variantes[vIdx][campo] = valor;
+    }
+
+    function actualizarCarne(cIdx, pIdx, carIdx, valor) {
+      menuData[cIdx].productos[pIdx].carnes[carIdx].precio = valor;
+    }
+
+    function agregarVariante(cIdx, pIdx) {
+      menuData[cIdx].productos[pIdx].variantes.push({ tipo: "Nuevo Tamaño", precio: 0 });
+      renderEditor();
+    }
+
+    function eliminarVariante(cIdx, pIdx, vIdx) {
+      menuData[cIdx].productos[pIdx].variantes.splice(vIdx, 1);
+      renderEditor();
+    }
+
+    function agregarProducto(cIdx) {
+      const nuevoId = Date.now();
+      menuData[cIdx].productos.push({
+        id: nuevoId,
+        nombre: "Nuevo Producto",
+        desc: "Ingredientes del producto...",
+        precio: 5000,
+        img: ""
+      });
+      renderEditor();
+    }
+
+    function eliminarProducto(cIdx, pIdx) {
+      if (confirm(`¿Estás seguro de eliminar ${menuData[cIdx].productos[pIdx].nombre}?`)) {
+        menuData[cIdx].productos.splice(pIdx, 1);
+        renderEditor();
+      }
+    }
+
+    function exportarJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(menuData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "menu.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    cargarDatos();
+  </script>
+</body>
+</html>
