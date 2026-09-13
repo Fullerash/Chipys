@@ -1018,33 +1018,68 @@
     // ==========================================
     // SISTEMA DE CONTROL DE HORARIOS
     // ==========================================
+    // ==========================================
+    // SISTEMA DE CONTROL DE HORARIOS (CON TRASNOCHE)
+    // ==========================================
     function comprobarHorario() {
       const ahora = new Date();
-      const diaSemana = ahora.getDay();
+      const diaActual = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
       const minutosActuales = ahora.getHours() * 60 + ahora.getMinutes();
 
-      const configHoy = HORARIOS_ATENCION[diaSemana];
       let abierto = false;
 
+      // 1. Revisar los turnos que iniciaron HOY
+      const configHoy = HORARIOS_ATENCION[diaActual];
       if (configHoy && configHoy.abierto) {
         configHoy.turnos.forEach(t => {
           const [hD, mD] = t.desde.split(':').map(Number);
           const [hH, mH] = t.hasta.split(':').map(Number);
 
           const minDesde = hD * 60 + mD;
-          let minHasta = hH * 60 + mH;
+          const minHasta = hH * 60 + mH;
 
-          if (minHasta < minDesde) {
-            if (minutosActuales >= minDesde || minutosActuales <= minHasta) {
+          // Turno normal (mismo día)
+          if (minHasta > minDesde) {
+            if (minutosActuales >= minDesde && minutosActuales <= minHasta) {
               abierto = true;
             }
-          } else {
-            if (minutosActuales >= minDesde && minutosActuales <= minHasta) {
+          } 
+          // Turno que cruza la medianoche (ej: abre a las 12:00 y cierra a las 01:00)
+          else if (minHasta < minDesde) {
+            if (minutosActuales >= minDesde) {
               abierto = true;
             }
           }
         });
       }
+
+      // 2. Si aún no marca abierto, revisar si venimos de la trasnoche de AYER
+      if (!abierto) {
+        const diaAyer = diaActual === 0 ? 6 : diaActual - 1;
+        const configAyer = HORARIOS_ATENCION[diaAyer];
+
+        if (configAyer && configAyer.abierto) {
+          configAyer.turnos.forEach(t => {
+            const [hD, mD] = t.desde.split(':').map(Number);
+            const [hH, mH] = t.hasta.split(':').map(Number);
+
+            const minDesde = hD * 60 + mD;
+            const minHasta = hH * 60 + mH;
+
+            // Si el turno de ayer cruzaba la medianoche y estamos antes de su hora de cierre matutina
+            if (minHasta < minDesde) {
+              if (minutosActuales <= minHasta) {
+                abierto = true;
+              }
+            }
+          });
+        }
+      }
+
+      localAbierto = abierto;
+      actualizarBadgeEstado(abierto);
+      actualizarBarraPedidoSegunHorario();
+    }
 
       localAbierto = abierto;
       actualizarBadgeEstado(abierto);
