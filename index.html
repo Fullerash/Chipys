@@ -880,7 +880,7 @@
       4: { nombre: "Jueves", abierto: true, turnos: [{ desde: "12:00", hasta: "23:00" }] },
       5: { nombre: "Viernes", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
       6: { nombre: "Sábado", abierto: true, turnos: [{ desde: "12:00", hasta: "01:00" }] },
-      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "01:00", hasta: "20:30" }] }
+      0: { nombre: "Domingo", abierto: true, turnos: [{ desde: "12:00", hasta: "20:30" }] }
     };
 
     let localAbierto = false;
@@ -1400,7 +1400,6 @@
             }
           }
 
-          // Opción de Agrandar Smash (+ $2.500 por 1 carne extra)
           let agrandarHtml = '';
           if (cat.permiteAgrandar) {
             agrandarHtml = `
@@ -1804,11 +1803,21 @@
       window.open(url, '_blank');
     }
 
-    // Inicializar
-    renderMenu();
-    actualizarUI();
-    comprobarHorario();
-    setInterval(comprobarHorario, 60000);
+    // Inicializar cargando el archivo menu.json
+    async function inicializarApp() {
+      try {
+        const res = await fetch('menu.json');
+        menuData = await res.json();
+        renderMenu();
+        actualizarUI();
+      } catch (e) {
+        console.error("Error al cargar la base de datos:", e);
+      }
+      comprobarHorario();
+      setInterval(comprobarHorario, 60000);
+    }
+
+    inicializarApp();
   </script>
 </body>
 </html>
